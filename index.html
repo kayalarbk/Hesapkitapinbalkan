@@ -3,192 +3,249 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<meta name="theme-color" content="#0E2027">
 <title>Balkan Hesap Defteri</title>
+<meta name="description" content="Balkan yolculuğu için çok para birimli harcama defteri.">
+<meta name="theme-color" content="#0E2027">
+<link rel="manifest" href="./manifest.webmanifest">
+<link rel="apple-touch-icon" href="./icons/apple-touch-icon.png">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Balkan">
 <style>
 :root{
-  --ink:#0E2027;
-  --panel:#16303A;
-  --panel2:#1D3D49;
-  --line:rgba(242,237,227,.13);
+  --ink:#0C1D24;
+  --ink2:#0F252D;
+  --panel:#14303A;
+  --panel2:#1B3C48;
+  --line:rgba(242,237,227,.12);
+  --line2:rgba(242,237,227,.22);
   --bone:#F2EDE3;
-  --muted:#8FAEB8;
+  --muted:#8DACB6;
+  --dim:#6B8B96;
   --eur:#E9A63C;
   --mkd:#3E9DB2;
   --all:#7FC29B;
   --card:#D08A96;
   --danger:#E0654F;
   --mono:ui-monospace,"SF Mono",SFMono-Regular,"Roboto Mono",Menlo,Consolas,monospace;
-  --sans:system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;
+  --sans:system-ui,-apple-system,"Segoe UI",Roboto,"Helvetica Neue",sans-serif;
+  --nav:calc(76px + env(safe-area-inset-bottom));
 }
 *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
-html,body{margin:0;padding:0}
+html{background:var(--ink)}
 body{
-  background:var(--ink);color:var(--bone);font-family:var(--sans);
+  margin:0;background:var(--ink);color:var(--bone);font-family:var(--sans);
   font-size:15px;line-height:1.45;-webkit-font-smoothing:antialiased;
-  padding:0 0 calc(78px + env(safe-area-inset-bottom));
+  padding-bottom:calc(var(--nav) + 16px);
+  overscroll-behavior-y:contain;
 }
-.wrap{max-width:520px;margin:0 auto;padding:0 16px}
+:focus-visible{outline:2px solid var(--eur);outline-offset:2px}
+.wrap{max-width:540px;margin:0 auto;padding:0 16px}
 
-header{padding:20px 0 4px;display:flex;align-items:baseline;justify-content:space-between}
-.brand{font-size:12px;letter-spacing:.22em;text-transform:uppercase;color:var(--muted);font-weight:600}
-.brand b{color:var(--bone);font-weight:600}
-.days{font-family:var(--mono);font-size:11px;color:var(--muted);text-align:right}
+/* header */
+header{
+  padding:calc(18px + env(safe-area-inset-top)) 0 2px;
+  display:flex;align-items:flex-start;justify-content:space-between;gap:12px;
+}
+.brand{font-size:11px;letter-spacing:.24em;text-transform:uppercase;color:var(--dim);font-weight:700;line-height:1.6}
+.brand b{color:var(--bone);font-weight:700}
+.days{font-family:var(--mono);font-size:11px;color:var(--muted);text-align:right;line-height:1.6}
+.days b{color:var(--bone);font-weight:600}
 
-/* ---- tabs ---- */
+/* tab bar */
 nav.tabs{
-  position:fixed;left:0;right:0;bottom:0;z-index:20;
-  background:rgba(14,32,39,.94);backdrop-filter:blur(12px);
+  position:fixed;left:0;right:0;bottom:0;z-index:30;
+  background:linear-gradient(to top,rgba(12,29,36,.99) 60%,rgba(12,29,36,.86));
+  -webkit-backdrop-filter:blur(14px);backdrop-filter:blur(14px);
   border-top:1px solid var(--line);
-  padding:8px 12px calc(8px + env(safe-area-inset-bottom));
-  display:flex;gap:6px;justify-content:center;
+  padding:9px 10px calc(9px + env(safe-area-inset-bottom));
+  display:flex;gap:4px;justify-content:center;
 }
 nav.tabs button{
-  flex:1;max-width:160px;background:none;border:0;color:var(--muted);
-  font-family:var(--sans);font-size:11px;font-weight:600;letter-spacing:.06em;
-  padding:8px 4px;border-radius:10px;cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:4px;
+  flex:1;max-width:130px;background:none;border:0;color:var(--dim);cursor:pointer;
+  font-family:var(--sans);font-size:10px;font-weight:700;letter-spacing:.12em;
+  padding:7px 2px;display:flex;flex-direction:column;align-items:center;gap:6px;
+  transition:color .15s;
 }
-nav.tabs button .mark{width:20px;height:2px;border-radius:2px;background:transparent}
+nav.tabs button .mark{width:18px;height:2px;border-radius:2px;background:transparent;transition:background .15s}
 nav.tabs button[aria-selected=true]{color:var(--bone)}
-nav.tabs button[aria-selected=true] .mark{background:var(--bone)}
+nav.tabs button[aria-selected=true] .mark{background:var(--eur)}
 .tabpane[hidden]{display:none}
 
-/* ---- ring ---- */
-.ringbox{position:relative;display:flex;justify-content:center;margin:6px 0 4px}
-svg.ring{width:232px;height:232px;transform:rotate(-90deg)}
+/* ring */
+.ringwrap{position:relative;margin:10px 0 2px}
+.ringwrap::before{
+  content:"";position:absolute;left:50%;top:44%;width:280px;height:280px;
+  transform:translate(-50%,-50%);border-radius:50%;
+  background:radial-gradient(circle,rgba(233,166,60,.10),transparent 62%);pointer-events:none;
+}
+.ringbox{position:relative;display:flex;justify-content:center}
+svg.ring{width:min(248px,68vw);height:min(248px,68vw);transform:rotate(-90deg)}
 svg.ring circle{fill:none;stroke-linecap:butt}
 .ringcenter{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;pointer-events:none}
-.ringcenter .lbl{font-size:10px;letter-spacing:.2em;text-transform:uppercase;color:var(--muted)}
-.ringcenter .big{font-family:var(--mono);font-size:38px;font-weight:600;letter-spacing:-.02em;line-height:1.1;margin:4px 0 2px;font-variant-numeric:tabular-nums}
-.ringcenter .sub{font-family:var(--mono);font-size:13px;color:var(--muted)}
+.ringcenter .lbl{font-size:9.5px;letter-spacing:.24em;text-transform:uppercase;color:var(--dim);font-weight:700}
+.ringcenter .big{font-family:var(--mono);font-size:clamp(30px,9vw,40px);font-weight:600;letter-spacing:-.03em;line-height:1.08;margin:6px 0 3px;font-variant-numeric:tabular-nums}
+.ringcenter .sub{font-family:var(--mono);font-size:12.5px;color:var(--dim)}
 .ringcenter .sub b{color:var(--bone);font-weight:600}
-.over .big{color:var(--danger)}
+.over .ringcenter .big{color:var(--danger)}
 
-.chips{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:14px}
-.chip{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:11px 10px}
-.chip .cur{display:flex;align-items:center;gap:6px;font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);font-weight:600}
+/* chips */
+.chips{display:grid;grid-template-columns:repeat(3,1fr);gap:7px;margin-top:16px}
+.chip{background:var(--panel);border:1px solid var(--line);border-radius:13px;padding:11px 10px}
+.chip .cur{display:flex;align-items:center;gap:6px;font-size:9.5px;letter-spacing:.16em;text-transform:uppercase;color:var(--dim);font-weight:700}
 .dot{width:7px;height:7px;border-radius:50%;flex:none}
-.chip .amt{font-family:var(--mono);font-size:17px;font-weight:600;margin-top:5px;font-variant-numeric:tabular-nums}
-.chip .eq{font-family:var(--mono);font-size:11px;color:var(--muted);margin-top:1px}
+.chip .amt{font-family:var(--mono);font-size:16px;font-weight:600;margin-top:6px;font-variant-numeric:tabular-nums;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.chip .eq{font-family:var(--mono);font-size:10.5px;color:var(--dim);margin-top:2px}
 
-.cardrow{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-top:8px;padding:11px 13px;border-radius:12px;background:var(--panel);border:1px dashed rgba(208,138,150,.45)}
-.cardrow .t{font-size:12px;color:var(--card);font-weight:600}
-.cardrow .n{font-family:var(--mono);font-size:11px;color:var(--muted);margin-top:1px}
-.cardrow .v{font-family:var(--mono);font-size:18px;font-weight:600;color:var(--card)}
+.cardrow{
+  display:flex;align-items:center;justify-content:space-between;gap:10px;margin-top:7px;
+  padding:12px 14px;border-radius:13px;background:var(--panel);border:1px dashed rgba(208,138,150,.42);
+}
+.cardrow .t{font-size:12px;color:var(--card);font-weight:700}
+.cardrow .n{font-family:var(--mono);font-size:10.5px;color:var(--dim);margin-top:1px}
+.cardrow .v{font-family:var(--mono);font-size:18px;font-weight:600;color:var(--card);font-variant-numeric:tabular-nums}
 
-section{margin-top:22px}
-h2{font-size:11px;letter-spacing:.2em;text-transform:uppercase;color:var(--muted);font-weight:600;margin:0 0 9px;display:flex;justify-content:space-between;align-items:center}
-h2 .side{letter-spacing:0;text-transform:none;font-size:11px;font-family:var(--mono)}
-.panel{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:13px}
+section{margin-top:24px}
+h2{
+  font-size:10px;letter-spacing:.22em;text-transform:uppercase;color:var(--dim);font-weight:700;
+  margin:0 0 10px;display:flex;justify-content:space-between;align-items:baseline;gap:10px;
+}
+h2 .side{letter-spacing:0;text-transform:none;font-size:11px;font-family:var(--mono);color:var(--dim)}
+.panel{background:var(--panel);border:1px solid var(--line);border-radius:15px;padding:14px}
 
-label{display:block;font-size:11px;color:var(--muted);margin:0 0 4px;letter-spacing:.04em}
+/* forms */
+label{display:block;font-size:10.5px;color:var(--dim);margin:0 0 5px;letter-spacing:.06em;font-weight:600}
 input,select,button{font-family:inherit;font-size:15px}
-input,select{width:100%;background:var(--panel2);border:1px solid var(--line);color:var(--bone);border-radius:10px;padding:11px 12px;outline:none}
-input:focus,select:focus{border-color:var(--mkd);box-shadow:0 0 0 3px rgba(62,157,178,.18)}
+input,select{
+  width:100%;background:var(--panel2);border:1px solid var(--line);color:var(--bone);
+  border-radius:11px;padding:12px;outline:none;appearance:none;-webkit-appearance:none;
+}
+select{background-image:linear-gradient(45deg,transparent 50%,var(--muted) 50%),linear-gradient(135deg,var(--muted) 50%,transparent 50%);
+  background-position:calc(100% - 17px) 51%,calc(100% - 12px) 51%;background-size:5px 5px,5px 5px;background-repeat:no-repeat;padding-right:34px}
+input:focus,select:focus{border-color:var(--mkd);box-shadow:0 0 0 3px rgba(62,157,178,.16)}
 input[type=number]{font-family:var(--mono);font-variant-numeric:tabular-nums}
-.row{display:grid;gap:9px;margin-bottom:9px}
+input[type=number]::-webkit-outer-spin-button,input[type=number]::-webkit-inner-spin-button{-webkit-appearance:none;margin:0}
+.row{display:grid;gap:9px;margin-bottom:10px}
 .r2{grid-template-columns:1fr 1fr}
 .r3{grid-template-columns:1fr 1fr 1fr}
-.seg{display:grid;grid-template-columns:1fr 1fr;border:1px solid var(--line);border-radius:10px;overflow:hidden}
-.seg button{background:var(--panel2);border:0;color:var(--muted);padding:11px 6px;font-size:13px;font-weight:600;cursor:pointer}
+.seg{display:grid;grid-template-columns:1fr 1fr;border:1px solid var(--line);border-radius:11px;overflow:hidden}
+.seg button{background:var(--panel2);border:0;color:var(--dim);padding:12px 6px;font-size:13px;font-weight:700;cursor:pointer;transition:background .12s}
 .seg button[aria-pressed=true]{background:var(--bone);color:var(--ink)}
 .seg button[aria-pressed=true].cc{background:var(--card);color:#2A1219}
-.btn{width:100%;background:var(--bone);color:var(--ink);border:0;border-radius:11px;padding:13px;font-weight:700;font-size:15px;cursor:pointer}
+.btn{width:100%;background:var(--bone);color:var(--ink);border:0;border-radius:12px;padding:14px;font-weight:700;font-size:15px;cursor:pointer}
 .btn:active{transform:translateY(1px)}
-.btn.ghost{background:transparent;color:var(--muted);border:1px solid var(--line);font-weight:600}
-.btn.sm{padding:10px;font-size:13px}
+.btn.ghost{background:transparent;color:var(--muted);border:1px solid var(--line2);font-weight:600}
+.btn.sm{padding:11px;font-size:13px}
+.btn.danger{color:var(--danger);border-color:rgba(224,101,79,.4)}
 
-.pocket{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
-.pk{background:var(--panel2);border-radius:10px;padding:10px;text-align:center}
-.pk .l{font-size:10px;color:var(--muted);letter-spacing:.1em;text-transform:uppercase}
-.pk .v{font-family:var(--mono);font-size:15px;font-weight:600;margin-top:3px;font-variant-numeric:tabular-nums}
-.pk .r{font-family:var(--mono);font-size:10px;color:var(--muted);margin-top:2px}
+/* pocket */
+.pocket{display:grid;grid-template-columns:repeat(3,1fr);gap:7px}
+.pk{background:var(--panel2);border-radius:11px;padding:11px 8px;text-align:center}
+.pk .l{font-size:9.5px;color:var(--dim);letter-spacing:.14em;text-transform:uppercase;font-weight:700}
+.pk .v{font-family:var(--mono);font-size:15px;font-weight:600;margin-top:4px;font-variant-numeric:tabular-nums;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.pk .r{font-family:var(--mono);font-size:9.5px;color:var(--dim);margin-top:2px}
 .pk.neg .v{color:var(--danger)}
 
-/* ---- analyzer ---- */
-.calcpanel{background:var(--panel);border:1px solid var(--line);border-radius:16px;padding:16px}
-.calcin{display:grid;grid-template-columns:1fr 118px;gap:9px}
-#cAmount{font-size:30px;font-weight:600;padding:12px 14px;text-align:right}
-.out{display:grid;gap:8px;margin-top:14px}
-.o{display:flex;align-items:baseline;justify-content:space-between;gap:10px;padding:13px 14px;background:var(--panel2);border-radius:12px}
-.o .k{font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);font-weight:600}
-.o .n{font-family:var(--mono);font-size:24px;font-weight:600;font-variant-numeric:tabular-nums}
-.o.primary{background:rgba(233,166,60,.12);border:1px solid rgba(233,166,60,.35)}
+/* category bars */
+.cat{margin-bottom:11px}
+.cat:last-child{margin-bottom:0}
+.cat .top{display:flex;justify-content:space-between;align-items:baseline;font-size:13px;margin-bottom:5px}
+.cat .top .n{font-weight:600}
+.cat .top .v{font-family:var(--mono);font-size:13px;font-variant-numeric:tabular-nums}
+.cat .top .p{font-family:var(--mono);font-size:10.5px;color:var(--dim);margin-left:7px}
+.track{height:6px;background:var(--panel2);border-radius:4px;overflow:hidden}
+.track i{display:block;height:100%;border-radius:4px;background:var(--eur)}
+
+/* analyzer */
+.calcin{display:grid;grid-template-columns:1fr 122px;gap:9px}
+#cAmount{font-size:30px;font-weight:600;padding:14px;text-align:right;letter-spacing:-.02em}
+.out{display:grid;gap:7px;margin-top:14px}
+.o{display:flex;align-items:baseline;justify-content:space-between;gap:10px;padding:13px 15px;background:var(--panel2);border-radius:12px}
+.o .k{font-size:10px;letter-spacing:.16em;text-transform:uppercase;color:var(--dim);font-weight:700}
+.o .n{font-family:var(--mono);font-size:23px;font-weight:600;font-variant-numeric:tabular-nums}
+.o.primary{background:rgba(233,166,60,.11);border:1px solid rgba(233,166,60,.32)}
 .o.primary .n{color:var(--eur)}
-.o.tl .n{color:var(--bone)}
-.verdict{margin-top:12px;padding:12px 14px;border-radius:12px;background:var(--panel2);font-size:13px;line-height:1.5;color:var(--muted)}
+.verdict{margin-top:12px;padding:13px 15px;border-radius:12px;background:var(--panel2);font-size:13px;line-height:1.55;color:var(--muted)}
 .verdict b{color:var(--bone)}
-table.ref{width:100%;border-collapse:collapse;margin-top:6px;font-family:var(--mono);font-size:13px}
-table.ref th{font-size:10px;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);font-weight:600;text-align:right;padding:0 0 7px}
+.verdict .warn{color:var(--danger)}
+table.ref{width:100%;border-collapse:collapse;font-family:var(--mono);font-size:13px}
+table.ref th{font-size:9.5px;letter-spacing:.14em;text-transform:uppercase;color:var(--dim);font-weight:700;text-align:right;padding:0 0 8px}
 table.ref th:first-child{text-align:left}
-table.ref td{padding:7px 0;border-top:1px solid var(--line);text-align:right;font-variant-numeric:tabular-nums}
+table.ref td{padding:8px 0;border-top:1px solid var(--line);text-align:right;font-variant-numeric:tabular-nums}
 table.ref td:first-child{text-align:left;color:var(--muted)}
 table.ref td.e{color:var(--eur);font-weight:600}
 
-.day{font-family:var(--mono);font-size:11px;color:var(--muted);margin:16px 0 7px;display:flex;justify-content:space-between}
+/* lists */
+.day{font-family:var(--mono);font-size:10.5px;color:var(--dim);margin:18px 0 8px;display:flex;justify-content:space-between;letter-spacing:.04em}
 ul{list-style:none;margin:0;padding:0}
-li.item{display:flex;align-items:center;gap:11px;padding:11px 12px;background:var(--panel);border:1px solid var(--line);border-radius:12px;margin-bottom:7px}
-li.item .bar{width:3px;align-self:stretch;border-radius:2px;flex:none}
-li.item .mid{flex:1;min-width:0}
+li.item{display:flex;align-items:stretch;gap:11px;padding:11px 12px;background:var(--panel);border:1px solid var(--line);border-radius:13px;margin-bottom:7px}
+li.item .bar{width:3px;border-radius:2px;flex:none}
+li.item .mid{flex:1;min-width:0;align-self:center}
 li.item .ttl{font-size:14px;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-li.item .meta{font-size:11px;color:var(--muted);margin-top:2px;display:flex;gap:7px;flex-wrap:wrap}
-li.item .meta .cc{color:var(--card);font-weight:600}
-li.item .val{font-family:var(--mono);font-size:15px;font-weight:600;text-align:right;flex:none;font-variant-numeric:tabular-nums}
-li.item .val small{display:block;font-size:10px;color:var(--muted);font-weight:400}
-.del{background:none;border:0;color:var(--muted);font-size:19px;line-height:1;padding:4px 2px 4px 6px;cursor:pointer;flex:none}
-.empty{color:var(--muted);font-size:13px;text-align:center;padding:22px 12px;border:1px dashed var(--line);border-radius:12px}
-li.ex{display:flex;align-items:center;gap:10px;padding:10px 12px;background:var(--panel2);border-radius:10px;margin-bottom:6px;font-family:var(--mono);font-size:13px}
+li.item .meta{font-size:10.5px;color:var(--dim);margin-top:2px;display:flex;gap:8px;flex-wrap:wrap}
+li.item .meta .cc{color:var(--card);font-weight:700}
+li.item .val{font-family:var(--mono);font-size:15px;font-weight:600;text-align:right;flex:none;align-self:center;font-variant-numeric:tabular-nums}
+li.item .val small{display:block;font-size:10px;color:var(--dim);font-weight:400;margin-top:1px}
+.del{background:none;border:0;color:var(--dim);font-size:20px;line-height:1;padding:0 0 0 4px;cursor:pointer;flex:none;align-self:center}
+.empty{color:var(--dim);font-size:13px;text-align:center;padding:26px 14px;border:1px dashed var(--line);border-radius:13px;line-height:1.6}
+li.ex{display:flex;align-items:center;gap:10px;padding:11px 12px;background:var(--panel2);border-radius:11px;margin-bottom:6px;font-family:var(--mono);font-size:13px}
 li.ex .g{flex:1}
-li.ex .rate{color:var(--muted);font-size:11px}
-.foot{display:grid;grid-template-columns:1fr 1fr;gap:9px;margin-top:12px}
-.note{font-size:11px;color:var(--muted);margin-top:9px;line-height:1.5}
-.hidden{display:none}
+li.ex .rate{color:var(--dim);font-size:11px}
+
+.foot{display:grid;grid-template-columns:1fr 1fr;gap:9px}
+.note{font-size:11px;color:var(--dim);margin-top:10px;line-height:1.55}
+.hidden{display:none!important}
+.meta-line{font-family:var(--mono);font-size:10.5px;color:var(--dim);text-align:center;margin-top:18px;line-height:1.7}
+
+/* toast */
 .toast{
-  position:fixed;left:50%;transform:translateX(-50%);bottom:calc(88px + env(safe-area-inset-bottom));
-  background:var(--bone);color:var(--ink);font-size:13px;font-weight:600;padding:10px 16px;border-radius:99px;
-  opacity:0;pointer-events:none;transition:opacity .2s;z-index:30;
+  position:fixed;left:50%;transform:translateX(-50%) translateY(8px);
+  bottom:calc(var(--nav) + 12px);z-index:40;
+  background:var(--bone);color:var(--ink);font-size:13px;font-weight:600;
+  padding:11px 14px;border-radius:99px;display:flex;align-items:center;gap:12px;
+  opacity:0;pointer-events:none;transition:opacity .2s,transform .2s;
+  box-shadow:0 8px 24px rgba(0,0,0,.4);max-width:calc(100vw - 32px);
 }
-.toast.on{opacity:1}
-@media(prefers-reduced-motion:no-preference){svg.ring circle{transition:stroke-dasharray .5s cubic-bezier(.4,0,.2,1)}}
+.toast.on{opacity:1;transform:translateX(-50%) translateY(0);pointer-events:auto}
+.toast button{background:none;border:0;color:var(--ink);font-weight:800;font-size:13px;cursor:pointer;text-decoration:underline;padding:0}
+@media(prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
+@media(prefers-reduced-motion:no-preference){svg.ring circle{transition:stroke-dasharray .55s cubic-bezier(.4,0,.2,1),stroke-dashoffset .55s cubic-bezier(.4,0,.2,1)}}
 </style>
 </head>
 <body>
 <div class="wrap">
 
 <header>
-  <div class="brand"><b>Balkan</b> Hesap Defteri</div>
+  <div class="brand"><b>Balkan</b><br>Hesap Defteri</div>
   <div class="days" id="dayCount"></div>
 </header>
 
-<!-- ============ TAB 1: ÖZET ============ -->
+<!-- ============ ÖZET ============ -->
 <div class="tabpane" id="pane-ozet">
-  <div class="ringbox" id="ringBox">
-    <svg class="ring" viewBox="0 0 200 200" aria-hidden="true">
-      <circle cx="100" cy="100" r="82" stroke="rgba(242,237,227,.09)" stroke-width="16"></circle>
-      <circle id="arcEUR" cx="100" cy="100" r="82" stroke="var(--eur)" stroke-width="16"></circle>
-      <circle id="arcMKD" cx="100" cy="100" r="82" stroke="var(--mkd)" stroke-width="16"></circle>
-      <circle id="arcALL" cx="100" cy="100" r="82" stroke="var(--all)" stroke-width="16"></circle>
-    </svg>
-    <div class="ringcenter">
-      <div class="lbl">Harcanan</div>
-      <div class="big" id="spentTotal">0,00 €</div>
-      <div class="sub" id="remainLine">—</div>
+  <div class="ringwrap">
+    <div class="ringbox" id="ringBox">
+      <svg class="ring" viewBox="0 0 200 200" aria-hidden="true">
+        <circle cx="100" cy="100" r="82" stroke="rgba(242,237,227,.08)" stroke-width="15"></circle>
+        <circle id="arcEUR" cx="100" cy="100" r="82" stroke="var(--eur)" stroke-width="15"></circle>
+        <circle id="arcMKD" cx="100" cy="100" r="82" stroke="var(--mkd)" stroke-width="15"></circle>
+        <circle id="arcALL" cx="100" cy="100" r="82" stroke="var(--all)" stroke-width="15"></circle>
+      </svg>
+      <div class="ringcenter" aria-live="polite">
+        <div class="lbl">Harcanan</div>
+        <div class="big" id="spentTotal">0,00 €</div>
+        <div class="sub" id="remainLine">—</div>
+      </div>
     </div>
   </div>
 
   <div class="chips">
-    <div class="chip">
-      <div class="cur"><span class="dot" style="background:var(--eur)"></span>Euro</div>
-      <div class="amt" id="sEUR">0,00 €</div><div class="eq">nakit euro</div>
-    </div>
-    <div class="chip">
-      <div class="cur"><span class="dot" style="background:var(--mkd)"></span>Denar</div>
-      <div class="amt" id="sMKD">0 ден</div><div class="eq" id="qMKD">0,00 €</div>
-    </div>
-    <div class="chip">
-      <div class="cur"><span class="dot" style="background:var(--all)"></span>Lek</div>
-      <div class="amt" id="sALL">0 L</div><div class="eq" id="qALL">0,00 €</div>
-    </div>
+    <div class="chip"><div class="cur"><span class="dot" style="background:var(--eur)"></span>Euro</div>
+      <div class="amt" id="sEUR">0,00 €</div><div class="eq">nakit euro</div></div>
+    <div class="chip"><div class="cur"><span class="dot" style="background:var(--mkd)"></span>Denar</div>
+      <div class="amt" id="sMKD">0 ден</div><div class="eq" id="qMKD">0,00 €</div></div>
+    <div class="chip"><div class="cur"><span class="dot" style="background:var(--all)"></span>Lek</div>
+      <div class="amt" id="sALL">0 L</div><div class="eq" id="qALL">0,00 €</div></div>
   </div>
 
   <div class="cardrow">
@@ -209,52 +266,33 @@ li.ex .rate{color:var(--muted);font-size:11px}
   </section>
 
   <section>
-    <h2>Bütçe ve ayarlar</h2>
-    <div class="panel">
-      <div class="row r2">
-        <div><label for="bBudget">Toplam bütçe (€ nakit)</label><input id="bBudget" type="number" inputmode="decimal" step="1" min="0"></div>
-        <div><label for="bStart">Yolculuk başlangıcı</label><input id="bStart" type="date"></div>
-      </div>
-      <div class="row r3">
-        <div><label for="rMKD">1 € = ? ден</label><input id="rMKD" type="number" inputmode="decimal" step="0.1" min="0"></div>
-        <div><label for="rALL">1 € = ? L</label><input id="rALL" type="number" inputmode="decimal" step="0.1" min="0"></div>
-        <div><label for="rTRY">1 € = ? ₺</label><input id="rTRY" type="number" inputmode="decimal" step="0.5" min="0"></div>
-      </div>
-      <div class="note">Bozdurma kaydettiğin para birimi için gerçek kurun kullanılır; bu alanlar sadece henüz bozdurmadıkların için geçerli. Lira kuru yalnızca kıyas amaçlı.</div>
-      <div class="foot">
-        <button class="btn ghost sm" id="exportBtn">Yedek al (JSON)</button>
-        <button class="btn ghost sm" id="importBtn">Yedeği yükle</button>
-      </div>
-      <input type="file" id="importFile" accept="application/json,.json" class="hidden">
-      <button class="btn ghost sm" id="resetBtn" style="margin-top:9px;color:var(--danger);border-color:rgba(224,101,79,.4)">Tüm kayıtları sil</button>
-    </div>
+    <h2>Neye gitti <span class="side" id="catTotal"></span></h2>
+    <div class="panel" id="catPanel"></div>
   </section>
 </div>
 
-<!-- ============ TAB 2: EKLE ============ -->
+<!-- ============ EKLE ============ -->
 <div class="tabpane" id="pane-ekle" hidden>
-  <section style="margin-top:14px">
+  <section style="margin-top:16px">
     <h2>Harcama ekle</h2>
     <div class="panel">
       <div class="row r2">
         <div><label for="eAmount">Tutar</label><input id="eAmount" type="number" inputmode="decimal" step="0.01" min="0" placeholder="0"></div>
         <div><label for="eCur">Para birimi</label>
-          <select id="eCur"><option value="EUR">€ Euro</option><option value="MKD">ден Denar</option><option value="ALL">L Lek</option></select>
-        </div>
+          <select id="eCur"><option value="EUR">€ Euro</option><option value="MKD">ден Denar</option><option value="ALL">L Lek</option></select></div>
       </div>
       <div class="row r2">
         <div><label>Ödeme</label>
-          <div class="seg"><button type="button" id="mCash" aria-pressed="true">Nakit</button><button type="button" id="mCard" class="cc" aria-pressed="false">Kart</button></div>
-        </div>
+          <div class="seg"><button type="button" id="mCash" aria-pressed="true">Nakit</button><button type="button" id="mCard" class="cc" aria-pressed="false">Kart</button></div></div>
         <div><label for="eCat">Kategori</label>
           <select id="eCat">
             <option>Yemek</option><option>Kahve / atıştırma</option><option>Market</option>
             <option>Ulaşım</option><option>Konaklama</option><option>Gezi / giriş</option>
             <option>Hediye</option><option>Diğer</option>
-          </select>
-        </div>
+          </select></div>
       </div>
-      <div class="row"><div><label for="eNote">Açıklama <span style="opacity:.6">(isteğe bağlı)</span></label><input id="eNote" type="text" placeholder="Ohrid'de akşam yemeği"></div></div>
+      <div class="row"><div><label for="eNote">Açıklama <span style="opacity:.6">(isteğe bağlı)</span></label>
+        <input id="eNote" type="text" placeholder="Ohrid'de akşam yemeği" autocomplete="off"></div></div>
       <div class="row"><div><label for="eDate">Tarih</label><input id="eDate" type="date"></div></div>
       <button class="btn" id="addExpense">Harcamayı kaydet</button>
     </div>
@@ -266,21 +304,23 @@ li.ex .rate{color:var(--muted);font-size:11px}
   </section>
 </div>
 
-<!-- ============ TAB 3: KUR ============ -->
+<!-- ============ FİYAT ============ -->
 <div class="tabpane" id="pane-kur" hidden>
-  <section style="margin-top:14px">
+  <section style="margin-top:16px">
     <h2>Fiyat çevir <span class="side" id="calcRateNote"></span></h2>
-    <div class="calcpanel">
+    <div class="panel">
       <div class="calcin">
-        <input id="cAmount" type="number" inputmode="decimal" step="1" min="0" placeholder="0">
-        <select id="cCur"><option value="MKD">ден Denar</option><option value="ALL">L Lek</option><option value="EUR">€ Euro</option></select>
+        <input id="cAmount" type="number" inputmode="decimal" step="1" min="0" placeholder="0" aria-label="Fiyat">
+        <select id="cCur" aria-label="Para birimi">
+          <option value="MKD">ден Denar</option><option value="ALL">L Lek</option><option value="EUR">€ Euro</option>
+        </select>
       </div>
       <div class="out">
         <div class="o primary"><span class="k" id="oPrimaryK">Euro</span><span class="n" id="oPrimary">0,00 €</span></div>
-        <div class="o tl"><span class="k">Türk lirası</span><span class="n" id="oTRY">0 ₺</span></div>
+        <div class="o"><span class="k">Türk lirası</span><span class="n" id="oTRY">0 ₺</span></div>
         <div class="o"><span class="k" id="oOtherK">Lek</span><span class="n" id="oOther">0 L</span></div>
       </div>
-      <div class="verdict" id="verdict">Fiyatı yaz, senin bozdurduğun kurdan euro ve lira karşılığını göster.</div>
+      <div class="verdict" id="verdict"></div>
       <button class="btn ghost sm" id="calcToExpense" style="margin-top:11px">Bunu harcama olarak ekle</button>
     </div>
   </section>
@@ -304,7 +344,60 @@ li.ex .rate{color:var(--muted);font-size:11px}
         <div><label for="xLocal">Miktar</label><input id="xLocal" type="number" inputmode="decimal" step="1" min="0" placeholder="6100"></div>
       </div>
       <button class="btn ghost sm" id="addExchange">Bozdurmayı kaydet</button>
-      <ul id="exList" style="margin-top:11px"></ul>
+      <ul id="exList" style="margin-top:12px"></ul>
+      <div class="note">Bozdurma girdiğin an, o para birimindeki bütün harcamalar bu gerçek kurdan euroya çevrilir.</div>
+    </div>
+  </section>
+</div>
+
+<!-- ============ AYARLAR ============ -->
+<div class="tabpane" id="pane-ayar" hidden>
+  <section style="margin-top:16px">
+    <h2>Bütçe</h2>
+    <div class="panel">
+      <div class="row"><div><label for="bBudget">Toplam nakit bütçe (€)</label>
+        <input id="bBudget" type="number" inputmode="decimal" step="5" min="0"></div></div>
+      <div class="row r2">
+        <div><label for="bStart">Başlangıç</label><input id="bStart" type="date"></div>
+        <div><label for="bEnd">Dönüş</label><input id="bEnd" type="date"></div>
+      </div>
+      <div class="note">Bütçe yalnızca yanına aldığın nakit euro. Kartla ödediklerin ayrı sayılır, bakiyeden düşmez.</div>
+    </div>
+  </section>
+
+  <section>
+    <h2>Kurlar</h2>
+    <div class="panel">
+      <div class="row r3">
+        <div><label for="rMKD">1 € = ден</label><input id="rMKD" type="number" inputmode="decimal" step="0.5" min="0"></div>
+        <div><label for="rALL">1 € = L</label><input id="rALL" type="number" inputmode="decimal" step="0.5" min="0"></div>
+        <div><label for="rTRY">1 € = ₺</label><input id="rTRY" type="number" inputmode="decimal" step="0.5" min="0"></div>
+      </div>
+      <div class="row"><div><label for="rMeal">Ortalama bir öğün (€) — kıyas için</label>
+        <input id="rMeal" type="number" inputmode="decimal" step="0.5" min="0"></div></div>
+      <div class="note" id="rateStatus"></div>
+    </div>
+  </section>
+
+  <section>
+    <h2>Veri</h2>
+    <div class="panel">
+      <div class="foot">
+        <button class="btn ghost sm" id="exportBtn">Yedek al</button>
+        <button class="btn ghost sm" id="importBtn">Yedeği yükle</button>
+      </div>
+      <input type="file" id="importFile" accept="application/json,.json" class="hidden">
+      <button class="btn ghost sm danger" id="resetBtn" style="margin-top:9px">Tüm kayıtları sil</button>
+      <div class="note">Kayıtlar yalnızca bu telefonda duruyor; hiçbir sunucuya gitmiyor. Ara ara yedek al.</div>
+    </div>
+  </section>
+
+  <section>
+    <h2>Uygulama</h2>
+    <div class="panel">
+      <button class="btn ghost sm hidden" id="installBtn">Ana ekrana ekle</button>
+      <button class="btn ghost sm" id="updateBtn" style="margin-top:9px">Güncellemeyi kontrol et</button>
+      <div class="meta-line" id="appMeta"></div>
     </div>
   </section>
 </div>
@@ -315,31 +408,36 @@ li.ex .rate{color:var(--muted);font-size:11px}
   <button role="tab" data-tab="ozet" aria-selected="true"><span class="mark"></span>ÖZET</button>
   <button role="tab" data-tab="ekle" aria-selected="false"><span class="mark"></span>EKLE</button>
   <button role="tab" data-tab="kur" aria-selected="false"><span class="mark"></span>FİYAT</button>
+  <button role="tab" data-tab="ayar" aria-selected="false"><span class="mark"></span>AYARLAR</button>
 </nav>
-<div class="toast" id="toast"></div>
+
+<div class="toast" id="toast"><span id="toastMsg"></span><button id="toastAction" class="hidden">Geri al</button></div>
 
 <script>
 "use strict";
+const APP_VERSION = "1.0.0";
 
+/* ---------- storage ---------- */
 const KEY = "balkan-ledger-v1";
+const TABKEY = "balkan-ledger-tab";
 const store = {
   async load(){
     try{
       if (window.storage && window.storage.get){
         try{ const r = await window.storage.get(KEY); if (r && r.value) return JSON.parse(r.value); }
-        catch(e){ /* kayıt yok */ }
+        catch(e){}
         return null;
       }
       const raw = localStorage.getItem(KEY);
       return raw ? JSON.parse(raw) : null;
-    }catch(e){ console.error("load", e); return null; }
+    }catch(e){ console.error(e); return null; }
   },
-  async save(data){
-    const txt = JSON.stringify(data);
+  async save(d){
+    const txt = JSON.stringify(d);
     try{
       if (window.storage && window.storage.set){ await window.storage.set(KEY, txt); return; }
       localStorage.setItem(KEY, txt);
-    }catch(e){ console.error("save", e); }
+    }catch(e){ console.error(e); toast("Kaydedilemedi — depolama dolu olabilir"); }
   }
 };
 
@@ -348,19 +446,22 @@ const CUR = {
   MKD:{sym:"ден", dec:0, color:"var(--mkd)", name:"Denar"},
   ALL:{sym:"L", dec:0, color:"var(--all)", name:"Lek"}
 };
-
-let state = {
+const DEFAULTS = {
   budget: 385,
   start: "2026-08-12",
-  rates: { MKD: 61.5, ALL: 98, TRY: 56 },
+  end: "2026-08-20",
+  rates: { MKD: 61.5, ALL: 98, TRY: 56, meal: 7.5 },
   exchanges: [],
   expenses: []
 };
+let state = structuredClone(DEFAULTS);
 let method = "cash";
+let lastDeleted = null;
 
 const $ = id => document.getElementById(id);
 const uid = () => Date.now().toString(36) + Math.random().toString(36).slice(2,7);
-const fmt = (n,d) => Number(n||0).toLocaleString("tr-TR",{minimumFractionDigits:d,maximumFractionDigits:d});
+const num = v => { const n = parseFloat(v); return Number.isFinite(n) ? n : 0; };
+const fmt = (n,d) => num(n).toLocaleString("tr-TR",{minimumFractionDigits:d,maximumFractionDigits:d});
 const money = (n,c) => fmt(n, CUR[c].dec) + " " + CUR[c].sym;
 const eur = n => fmt(n,2) + " €";
 const lira = n => fmt(n,0) + " ₺";
@@ -369,71 +470,71 @@ function rateOf(cur){
   if (cur === "EUR") return 1;
   const ex = state.exchanges.filter(x => x.cur === cur);
   const e = ex.reduce((s,x)=>s+x.eurGiven,0), l = ex.reduce((s,x)=>s+x.local,0);
-  return (e>0 && l>0) ? l/e : (Number(state.rates[cur]) || 1);
+  if (e > 0 && l > 0) return l/e;
+  return num(state.rates[cur]) || 1;
 }
-const isRealRate = cur => cur === "EUR" || state.exchanges.filter(x=>x.cur===cur).reduce((s,x)=>s+x.eurGiven,0) > 0;
+const isRealRate = c => c === "EUR" || state.exchanges.filter(x=>x.cur===c).reduce((s,x)=>s+x.eurGiven,0) > 0;
 const toEur = (a,c) => c === "EUR" ? a : a / rateOf(c);
 
-function trDate(iso){
-  return new Date(iso+"T12:00:00").toLocaleDateString("tr-TR",{day:"numeric",month:"long",weekday:"short"});
-}
 function todayISO(){
   const d = new Date();
   return new Date(d.getTime() - d.getTimezoneOffset()*60000).toISOString().slice(0,10);
 }
-function escapeHtml(s){
-  return String(s).replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+function trDate(iso){
+  const d = new Date(iso+"T12:00:00");
+  return isNaN(d) ? iso : d.toLocaleDateString("tr-TR",{day:"numeric",month:"long",weekday:"short"});
 }
-let toastTimer;
-function toast(msg){
-  const t = $("toast"); t.textContent = msg; t.classList.add("on");
-  clearTimeout(toastTimer); toastTimer = setTimeout(()=>t.classList.remove("on"), 1800);
-}
+const dayDiff = (a,b) => Math.round((new Date(b+"T12:00:00") - new Date(a+"T12:00:00"))/86400000);
+const esc = s => String(s).replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
 
+let toastTimer;
+function toast(msg, undo){
+  $("toastMsg").textContent = msg;
+  const btn = $("toastAction");
+  btn.classList.toggle("hidden", !undo);
+  btn.onclick = undo ? () => { undo(); hideToast(); } : null;
+  $("toast").classList.add("on");
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(hideToast, undo ? 5000 : 1800);
+}
+function hideToast(){ $("toast").classList.remove("on"); }
+
+/* ---------- hesap ---------- */
 function calc(){
   const cash = {EUR:0,MKD:0,ALL:0}, card = {EUR:0,MKD:0,ALL:0};
   for (const e of state.expenses) (e.method === "card" ? card : cash)[e.cur] += e.amount;
   const cashEur = {EUR:cash.EUR, MKD:toEur(cash.MKD,"MKD"), ALL:toEur(cash.ALL,"ALL")};
   const spent = cashEur.EUR + cashEur.MKD + cashEur.ALL;
   const cardEur = card.EUR + toEur(card.MKD,"MKD") + toEur(card.ALL,"ALL");
-  const givenEur = state.exchanges.reduce((s,x)=>s+x.eurGiven,0);
-  const pocket = {
-    EUR: state.budget - givenEur - cash.EUR,
-    MKD: state.exchanges.filter(x=>x.cur==="MKD").reduce((s,x)=>s+x.local,0) - cash.MKD,
-    ALL: state.exchanges.filter(x=>x.cur==="ALL").reduce((s,x)=>s+x.local,0) - cash.ALL
-  };
-  return {cash, card, cashEur, spent, cardEur, pocket};
+  const given = state.exchanges.reduce((s,x)=>s+x.eurGiven,0);
+  const got = c => state.exchanges.filter(x=>x.cur===c).reduce((s,x)=>s+x.local,0);
+  const pocket = { EUR: num(state.budget) - given - cash.EUR, MKD: got("MKD") - cash.MKD, ALL: got("ALL") - cash.ALL };
+  return {cash, card, cashEur, spent, cardEur, pocket, remain: num(state.budget) - spent};
 }
 
 const C = 2 * Math.PI * 82;
 
 function render(){
   const k = calc();
-  const budget = Number(state.budget) || 0;
-  const remain = budget - k.spent;
+  const budget = num(state.budget);
 
   const denom = Math.max(budget, k.spent, 0.0001);
   let offset = 0;
   for (const cur of ["EUR","MKD","ALL"]){
     const len = Math.max(0, k.cashEur[cur]) / denom * C;
     const el = $("arc"+cur);
-    el.setAttribute("stroke-dasharray", `${len} ${C-len}`);
+    el.setAttribute("stroke-dasharray", `${len} ${Math.max(0, C-len)}`);
     el.setAttribute("stroke-dashoffset", `${-offset}`);
+    el.setAttribute("stroke", k.remain < 0 ? "var(--danger)" : `var(--${cur.toLowerCase()})`);
     offset += len;
   }
   $("spentTotal").textContent = eur(k.spent);
-  $("ringBox").classList.toggle("over", remain < 0);
-  $("remainLine").innerHTML = remain >= 0
-    ? `<b>${eur(remain)}</b> kaldı`
-    : `<b style="color:var(--danger)">${eur(Math.abs(remain))}</b> aşıldı`;
+  $("ringBox").classList.toggle("over", k.remain < 0);
+  $("remainLine").innerHTML = k.remain >= 0
+    ? `<b>${eur(k.remain)}</b> kaldı`
+    : `<b>${eur(Math.abs(k.remain))}</b> aşıldı`;
 
-  if (state.start){
-    const n = Math.floor((new Date(todayISO()+"T12:00:00") - new Date(state.start+"T12:00:00"))/86400000) + 1;
-    if (n >= 1){
-      const left = Math.max(1, 8 - n + 1);
-      $("dayCount").textContent = remain >= 0 ? `${n}. gün · günlük ${fmt(remain/left,0)} €` : `${n}. gün`;
-    } else $("dayCount").textContent = "";
-  }
+  renderHeader(k);
 
   $("sEUR").textContent = money(k.cash.EUR,"EUR");
   $("sMKD").textContent = money(k.cash.MKD,"MKD");
@@ -450,25 +551,71 @@ function render(){
       : (isRealRate(cur) ? `kur ${fmt(rateOf(cur),2)}` : `~${fmt(rateOf(cur),1)} tahmini`);
   }
   const missing = ["MKD","ALL"].filter(c => !isRealRate(c)).map(c => CUR[c].name);
-  $("rateNote").textContent = missing.length
+  const msg = missing.length
     ? `${missing.join(" ve ")} için henüz bozdurma girmedin — tahmini kur kullanılıyor.`
-    : "Tüm çevrimler senin bozdurduğun gerçek kurdan hesaplanıyor.";
+    : "Bütün çevrimler senin bozdurduğun gerçek kurdan yapılıyor.";
+  $("rateNote").textContent = msg;
+  $("rateStatus").textContent = msg;
 
+  renderCategories(k);
   renderExchanges();
   renderExpenses();
   renderCalc();
 }
 
+function renderHeader(k){
+  const el = $("dayCount");
+  if (!state.start || !state.end){ el.textContent = ""; return; }
+  const today = todayISO();
+  const n = dayDiff(state.start, today) + 1;
+  const total = dayDiff(state.start, state.end) + 1;
+  if (n < 1){ el.innerHTML = `<b>${Math.abs(n)+1} gün</b> kaldı`; return; }
+  if (n > total){ el.innerHTML = `yolculuk bitti`; return; }
+  const left = Math.max(1, total - n + 1);
+  el.innerHTML = k.remain > 0
+    ? `<b>${n}/${total}</b>. gün<br>günlük ${fmt(k.remain/left,0)} €`
+    : `<b>${n}/${total}</b>. gün`;
+}
+
+function renderCategories(k){
+  const p = $("catPanel");
+  const sums = {};
+  for (const e of state.expenses){
+    const v = toEur(e.amount, e.cur);
+    sums[e.cat] = (sums[e.cat] || 0) + v;
+  }
+  const rows = Object.entries(sums).sort((a,b)=>b[1]-a[1]);
+  const total = rows.reduce((s,r)=>s+r[1],0);
+  $("catTotal").textContent = total ? eur(total) : "";
+  if (!rows.length){
+    p.innerHTML = `<div class="empty" style="border:0;padding:8px 0">Harcama girdikçe dağılım burada oluşur.</div>`;
+    return;
+  }
+  const max = rows[0][1];
+  p.innerHTML = rows.map(([name,v]) => `
+    <div class="cat">
+      <div class="top"><span class="n">${esc(name)}</span>
+        <span><span class="v">${eur(v)}</span><span class="p">%${fmt(v/total*100,0)}</span></span></div>
+      <div class="track"><i style="width:${Math.max(3, v/max*100)}%"></i></div>
+    </div>`).join("");
+}
+
 function renderExchanges(){
   const ul = $("exList"); ul.innerHTML = "";
   $("exCount").textContent = state.exchanges.length ? `${state.exchanges.length} kayıt` : "";
-  for (const x of [...state.exchanges].sort((a,b)=>b.date.localeCompare(a.date))){
+  const sorted = [...state.exchanges].sort((a,b)=>String(b.date).localeCompare(String(a.date)));
+  for (const x of sorted){
     const li = document.createElement("li");
     li.className = "ex";
     li.innerHTML = `<span class="g">${fmt(x.eurGiven,0)} € → ${money(x.local,x.cur)}</span><span class="rate">${fmt(x.local/x.eurGiven,2)}</span>`;
     const b = document.createElement("button");
-    b.className = "del"; b.textContent = "×"; b.setAttribute("aria-label","Sil");
-    b.onclick = () => { state.exchanges = state.exchanges.filter(i=>i.id!==x.id); persist(); };
+    b.className = "del"; b.textContent = "×"; b.setAttribute("aria-label","Bozdurmayı sil");
+    b.onclick = () => {
+      const kept = x;
+      state.exchanges = state.exchanges.filter(i=>i.id!==x.id);
+      persist();
+      toast("Bozdurma silindi", () => { state.exchanges.push(kept); persist(); });
+    };
     li.appendChild(b); ul.appendChild(li);
   }
 }
@@ -477,7 +624,7 @@ function renderExpenses(){
   const box = $("expList"); box.innerHTML = "";
   $("expCount").textContent = state.expenses.length ? `${state.expenses.length} kalem` : "";
   if (!state.expenses.length){
-    box.innerHTML = `<div class="empty">Henüz harcama yok. İlk kahveyi ekleyerek başla.</div>`;
+    box.innerHTML = `<div class="empty">Henüz harcama yok.<br>İlk kahveyi ekleyerek başla.</div>`;
     return;
   }
   const byDay = {};
@@ -495,13 +642,18 @@ function renderExpenses(){
       const bar = document.createElement("div"); bar.className = "bar";
       bar.style.background = e.method === "card" ? "var(--card)" : CUR[e.cur].color;
       const mid = document.createElement("div"); mid.className = "mid";
-      mid.innerHTML = `<div class="ttl">${escapeHtml(e.note || e.cat)}</div>
-        <div class="meta">${e.note ? `<span>${escapeHtml(e.cat)}</span>` : ""}${e.method === "card" ? `<span class="cc">Kart</span>` : ""}</div>`;
+      mid.innerHTML = `<div class="ttl">${esc(e.note || e.cat)}</div>
+        <div class="meta">${e.note ? `<span>${esc(e.cat)}</span>` : ""}${e.method === "card" ? `<span class="cc">Kart</span>` : ""}</div>`;
       const val = document.createElement("div"); val.className = "val";
       val.innerHTML = money(e.amount,e.cur) + (e.cur !== "EUR" ? `<small>${eur(toEur(e.amount,e.cur))}</small>` : "");
       const del = document.createElement("button");
-      del.className = "del"; del.textContent = "×"; del.setAttribute("aria-label","Sil");
-      del.onclick = () => { state.expenses = state.expenses.filter(i=>i.id!==e.id); persist(); };
+      del.className = "del"; del.textContent = "×"; del.setAttribute("aria-label","Harcamayı sil");
+      del.onclick = () => {
+        const kept = e;
+        state.expenses = state.expenses.filter(i=>i.id!==e.id);
+        persist();
+        toast("Silindi", () => { state.expenses.push(kept); persist(); });
+      };
       li.append(bar, mid, val, del); ul.appendChild(li);
     }
     box.appendChild(ul);
@@ -511,72 +663,72 @@ function renderExpenses(){
 /* ---------- fiyat çevirici ---------- */
 function renderCalc(){
   const cur = $("cCur").value;
-  const amt = parseFloat($("cAmount").value) || 0;
+  const amt = num($("cAmount").value);
   const e = toEur(amt, cur);
-  const tl = e * (Number(state.rates.TRY) || 0);
-  const other = cur === "MKD" ? "ALL" : (cur === "ALL" ? "MKD" : "MKD");
+  const tl = e * num(state.rates.TRY);
+  const primary = cur === "EUR" ? "MKD" : "EUR";
+  const other = cur === "ALL" ? "MKD" : "ALL";
 
-  $("oPrimaryK").textContent = "Euro";
-  $("oPrimary").textContent = eur(e);
+  $("oPrimaryK").textContent = CUR[primary].name;
+  $("oPrimary").textContent = primary === "EUR" ? eur(e) : money(e * rateOf(primary), primary);
   $("oTRY").textContent = lira(tl);
   $("oOtherK").textContent = CUR[other].name;
   $("oOther").textContent = money(e * rateOf(other), other);
 
   $("calcRateNote").textContent = cur === "EUR" ? ""
-    : (isRealRate(cur) ? `senin kurun ${fmt(rateOf(cur),2)}` : `tahmini ${fmt(rateOf(cur),1)}`);
+    : (isRealRate(cur) ? `kurun ${fmt(rateOf(cur),2)}` : `tahmini ${fmt(rateOf(cur),1)}`);
 
-  // kıyas cümlesi
   const v = $("verdict");
   if (!amt){
-    v.innerHTML = "Fiyatı yaz, senin bozdurduğun kurdan euro ve lira karşılığını göster.";
+    v.innerHTML = "Etiketteki rakamı yaz — senin bozdurduğun kurdan euro ve lira karşılığını görürsün.";
   } else {
     const k = calc();
-    const remain = (Number(state.budget)||0) - k.spent;
-    const pct = remain > 0 ? (e/remain*100) : 0;
-    const meals = e / 7.5;
-    v.innerHTML = `Bu, kalan bütçenin <b>%${fmt(pct,1)}</b>'i. `
-      + (meals >= 0.6 ? `Kabaca <b>${fmt(meals,1)} öğün</b> yemek parası.` : `Bir kahve civarı.`)
-      + (!isRealRate(cur) && cur !== "EUR" ? ` <span style="color:var(--danger)">Henüz gerçek kur girilmedi.</span>` : "");
+    const pct = k.remain > 0 ? e/k.remain*100 : 0;
+    const meal = num(state.rates.meal) || 7.5;
+    const meals = e/meal;
+    let line = k.remain > 0 ? `Kalan bütçenin <b>%${fmt(pct,1)}</b>'i. ` : `Bütçe zaten aşılmış durumda. `;
+    line += meals >= 0.5 ? `Kabaca <b>${fmt(meals,1)} öğün</b> yemek parası.` : `Bir kahvenin altında.`;
+    if (cur !== "EUR" && !isRealRate(cur)) line += ` <span class="warn">Gerçek kur henüz girilmedi.</span>`;
+    v.innerHTML = line;
   }
   renderRef(cur);
 }
 
 function renderRef(cur){
-  const body = $("refBody"); body.innerHTML = "";
+  const body = $("refBody");
   $("refHead").textContent = CUR[cur].name;
-  const steps = cur === "EUR" ? [1,2,5,10,20,50] :
-                cur === "MKD" ? [50,100,200,500,1000,2000] : [100,200,500,1000,2000,5000];
-  const tryRate = Number(state.rates.TRY) || 0;
-  for (const s of steps){
+  const steps = cur === "EUR" ? [1,2,5,10,20,50]
+              : cur === "MKD" ? [50,100,200,500,1000,2000]
+              : [100,200,500,1000,2000,5000];
+  const tr = num(state.rates.TRY);
+  body.innerHTML = steps.map(s => {
     const e = toEur(s, cur);
-    const tr = document.createElement("tr");
-    tr.innerHTML = `<td>${money(s,cur)}</td><td class="e">${eur(e)}</td><td>${lira(e*tryRate)}</td>`;
-    body.appendChild(tr);
-  }
+    return `<tr><td>${money(s,cur)}</td><td class="e">${eur(e)}</td><td>${lira(e*tr)}</td></tr>`;
+  }).join("");
 }
 
-/* ---------- actions ---------- */
+/* ---------- eylemler ---------- */
 async function persist(){ await store.save(state); render(); }
 
-document.querySelectorAll("nav.tabs button").forEach(b => {
-  b.onclick = () => {
-    document.querySelectorAll("nav.tabs button").forEach(x => x.setAttribute("aria-selected", x === b));
-    ["ozet","ekle","kur"].forEach(t => $("pane-"+t).hidden = (t !== b.dataset.tab));
-    window.scrollTo({top:0, behavior:"instant"});
-  };
-});
+function switchTab(name){
+  document.querySelectorAll("nav.tabs button").forEach(b => b.setAttribute("aria-selected", b.dataset.tab === name));
+  ["ozet","ekle","kur","ayar"].forEach(t => $("pane-"+t).hidden = (t !== name));
+  try{ localStorage.setItem(TABKEY, name); }catch(e){}
+  window.scrollTo(0,0);
+}
+document.querySelectorAll("nav.tabs button").forEach(b => b.onclick = () => switchTab(b.dataset.tab));
 
-$("mCash").onclick = () => setMethod("cash");
-$("mCard").onclick = () => setMethod("card");
 function setMethod(m){
   method = m;
   $("mCash").setAttribute("aria-pressed", m === "cash");
   $("mCard").setAttribute("aria-pressed", m === "card");
 }
+$("mCash").onclick = () => setMethod("cash");
+$("mCard").onclick = () => setMethod("card");
 
 $("addExpense").onclick = () => {
-  const amt = parseFloat($("eAmount").value);
-  if (!(amt > 0)){ $("eAmount").focus(); return; }
+  const amt = num($("eAmount").value);
+  if (amt <= 0){ $("eAmount").focus(); toast("Tutar gir"); return; }
   state.expenses.push({
     id: uid(), amount: amt, cur: $("eCur").value, method,
     cat: $("eCat").value, note: $("eNote").value.trim(), date: $("eDate").value || todayISO()
@@ -586,37 +738,41 @@ $("addExpense").onclick = () => {
 };
 
 $("addExchange").onclick = () => {
-  const e = parseFloat($("xEur").value), l = parseFloat($("xLocal").value);
-  if (!(e > 0) || !(l > 0)){ $("xEur").focus(); return; }
+  const e = num($("xEur").value), l = num($("xLocal").value);
+  if (e <= 0 || l <= 0){ $("xEur").focus(); toast("İki alanı da doldur"); return; }
   state.exchanges.push({id:uid(), eurGiven:e, local:l, cur:$("xCur").value, date:todayISO()});
   $("xEur").value = ""; $("xLocal").value = "";
-  persist(); toast("Kur güncellendi");
+  persist(); toast(`Kur güncellendi: ${fmt(l/e,2)}`);
 };
 
 $("cAmount").oninput = renderCalc;
 $("cCur").onchange = renderCalc;
 $("calcToExpense").onclick = () => {
-  const amt = parseFloat($("cAmount").value);
-  if (!(amt > 0)){ $("cAmount").focus(); return; }
+  const amt = num($("cAmount").value);
+  if (amt <= 0){ $("cAmount").focus(); return; }
   $("eAmount").value = amt;
   $("eCur").value = $("cCur").value;
-  document.querySelector('nav.tabs button[data-tab=ekle]').click();
+  switchTab("ekle");
   $("eNote").focus();
 };
 
-$("bBudget").onchange = e => { state.budget = parseFloat(e.target.value) || 0; persist(); };
-$("bStart").onchange  = e => { state.start = e.target.value; persist(); };
-$("rMKD").onchange = e => { state.rates.MKD = parseFloat(e.target.value) || 1; persist(); };
-$("rALL").onchange = e => { state.rates.ALL = parseFloat(e.target.value) || 1; persist(); };
-$("rTRY").onchange = e => { state.rates.TRY = parseFloat(e.target.value) || 0; persist(); };
+const bind = (id, fn) => { const el = $(id); el.onchange = e => { fn(e.target.value); persist(); }; };
+bind("bBudget", v => state.budget = num(v));
+bind("bStart",  v => state.start = v);
+bind("bEnd",    v => state.end = v);
+bind("rMKD",    v => state.rates.MKD = num(v) || 1);
+bind("rALL",    v => state.rates.ALL = num(v) || 1);
+bind("rTRY",    v => state.rates.TRY = num(v));
+bind("rMeal",   v => state.rates.meal = num(v) || 7.5);
 
 $("exportBtn").onclick = () => {
   const blob = new Blob([JSON.stringify(state,null,2)],{type:"application/json"});
   const a = document.createElement("a");
   a.href = URL.createObjectURL(blob);
   a.download = `balkan-hesap-${todayISO()}.json`;
-  a.click();
+  document.body.appendChild(a); a.click(); a.remove();
   setTimeout(()=>URL.revokeObjectURL(a.href), 1000);
+  toast("Yedek indirildi");
 };
 $("importBtn").onclick = () => $("importFile").click();
 $("importFile").onchange = ev => {
@@ -625,35 +781,81 @@ $("importFile").onchange = ev => {
   r.onload = () => {
     try{
       const d = JSON.parse(r.result);
-      if (!d || !Array.isArray(d.expenses)) throw new Error("format");
-      d.rates = Object.assign({}, state.rates, d.rates || {});
-      state = Object.assign(state, d);
+      if (!d || !Array.isArray(d.expenses) || !Array.isArray(d.exchanges)) throw new Error("format");
+      state = Object.assign(structuredClone(DEFAULTS), d);
+      state.rates = Object.assign({}, DEFAULTS.rates, d.rates || {});
       fillSettings(); persist(); toast("Yedek yüklendi");
-    }catch(err){ alert("Dosya okunamadı. Bu bir yedek dosyası değil."); }
+    }catch(err){ toast("Bu dosya okunamadı"); }
   };
   r.readAsText(f); ev.target.value = "";
 };
 $("resetBtn").onclick = () => {
   if (!confirm("Bütün harcamalar ve bozdurmalar silinecek. Devam edilsin mi?")) return;
-  state.expenses = []; state.exchanges = []; persist();
+  const backup = { expenses: state.expenses, exchanges: state.exchanges };
+  state.expenses = []; state.exchanges = [];
+  persist();
+  toast("Kayıtlar silindi", () => { state.expenses = backup.expenses; state.exchanges = backup.exchanges; persist(); });
 };
 
 function fillSettings(){
   $("bBudget").value = state.budget;
   $("bStart").value = state.start;
+  $("bEnd").value = state.end;
   $("rMKD").value = state.rates.MKD;
   $("rALL").value = state.rates.ALL;
   $("rTRY").value = state.rates.TRY;
+  $("rMeal").value = state.rates.meal;
 }
 
+/* ---------- PWA ---------- */
+let deferredPrompt = null;
+window.addEventListener("beforeinstallprompt", e => {
+  e.preventDefault(); deferredPrompt = e;
+  $("installBtn").classList.remove("hidden");
+});
+$("installBtn").onclick = async () => {
+  if (!deferredPrompt) return;
+  deferredPrompt.prompt();
+  await deferredPrompt.userChoice;
+  deferredPrompt = null;
+  $("installBtn").classList.add("hidden");
+};
+$("updateBtn").onclick = async () => {
+  if (!("serviceWorker" in navigator)) { toast("Bu tarayıcı desteklemiyor"); return; }
+  const reg = await navigator.serviceWorker.getRegistration();
+  if (!reg){ toast("Kayıt bulunamadı"); return; }
+  await reg.update();
+  toast("Güncelleme arandı — varsa yeniden açınca gelir");
+};
+function appMeta(){
+  const standalone = window.matchMedia("(display-mode: standalone)").matches || navigator.standalone;
+  $("appMeta").innerHTML = `sürüm ${APP_VERSION} · ${standalone ? "ana ekrandan çalışıyor" : "tarayıcıda"}<br>${navigator.onLine ? "çevrimiçi" : "çevrimdışı — sorun değil, her şey yerelde"}`;
+}
+window.addEventListener("online", appMeta);
+window.addEventListener("offline", appMeta);
+
+if ("serviceWorker" in navigator && location.protocol.startsWith("http")){
+  window.addEventListener("load", () => navigator.serviceWorker.register("./sw.js").catch(()=>{}));
+}
+
+/* ---------- açılış ---------- */
 (async function init(){
   const saved = await store.load();
   if (saved){
-    saved.rates = Object.assign({}, state.rates, saved.rates || {});
-    state = Object.assign(state, saved);
+    state = Object.assign(structuredClone(DEFAULTS), saved);
+    state.rates = Object.assign({}, DEFAULTS.rates, saved.rates || {});
+    state.expenses = Array.isArray(saved.expenses) ? saved.expenses : [];
+    state.exchanges = Array.isArray(saved.exchanges) ? saved.exchanges : [];
   }
   $("eDate").value = todayISO();
   fillSettings();
+  let tab = "ozet";
+  try{ tab = localStorage.getItem(TABKEY) || "ozet"; }catch(e){}
+  const asked = new URLSearchParams(location.search).get("tab");
+  if (asked) tab = asked;
+  if (!["ozet","ekle","kur","ayar"].includes(tab)) tab = "ozet";
+  switchTab(tab);
+  appMeta();
   render();
 })();
 </script>
