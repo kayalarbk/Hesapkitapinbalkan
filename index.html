@@ -1,11 +1,11 @@
 <!DOCTYPE html>
-<html lang="tr">
+<html lang="tr" data-theme="dark">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>Balkan Hesap Defteri</title>
 <meta name="description" content="Balkan yolculuğu için çok para birimli harcama defteri.">
-<meta name="theme-color" content="#0E2027">
+<meta name="theme-color" content="#0C1D24" id="themeColor">
 <link rel="manifest" href="./manifest.webmanifest">
 <link rel="apple-touch-icon" href="./icons/apple-touch-icon.png">
 <meta name="apple-mobile-web-app-capable" content="yes">
@@ -13,21 +13,27 @@
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="apple-mobile-web-app-title" content="Balkan">
 <style>
+:root, [data-theme="dark"]{
+  --ink:#0C1D24; --panel:#14303A; --panel2:#1B3C48;
+  --line:rgba(242,237,227,.12); --line2:rgba(242,237,227,.22);
+  --track:rgba(242,237,227,.08);
+  --navbg:12,29,36;
+  --bone:#F2EDE3; --muted:#8DACB6; --dim:#6B8B96;
+  --eur:#E9A63C; --mkd:#3E9DB2; --all:#7FC29B; --card:#D08A96; --danger:#E0654F;
+  --glow:rgba(233,166,60,.10);
+  --shadow:0 8px 24px rgba(0,0,0,.4);
+}
+[data-theme="light"]{
+  --ink:#F3EFE6; --panel:#FFFFFF; --panel2:#F0EADE;
+  --line:rgba(20,38,46,.13); --line2:rgba(20,38,46,.24);
+  --track:rgba(20,38,46,.09);
+  --navbg:243,239,230;
+  --bone:#152830; --muted:#4C6874; --dim:#71888F;
+  --eur:#B4781A; --mkd:#25798E; --all:#3E8E6C; --card:#B25867; --danger:#C0402A;
+  --glow:rgba(180,120,26,.10);
+  --shadow:0 8px 24px rgba(20,38,46,.14);
+}
 :root{
-  --ink:#0C1D24;
-  --ink2:#0F252D;
-  --panel:#14303A;
-  --panel2:#1B3C48;
-  --line:rgba(242,237,227,.12);
-  --line2:rgba(242,237,227,.22);
-  --bone:#F2EDE3;
-  --muted:#8DACB6;
-  --dim:#6B8B96;
-  --eur:#E9A63C;
-  --mkd:#3E9DB2;
-  --all:#7FC29B;
-  --card:#D08A96;
-  --danger:#E0654F;
   --mono:ui-monospace,"SF Mono",SFMono-Regular,"Roboto Mono",Menlo,Consolas,monospace;
   --sans:system-ui,-apple-system,"Segoe UI",Roboto,"Helvetica Neue",sans-serif;
   --nav:calc(76px + env(safe-area-inset-bottom));
@@ -37,49 +43,37 @@ html{background:var(--ink)}
 body{
   margin:0;background:var(--ink);color:var(--bone);font-family:var(--sans);
   font-size:15px;line-height:1.45;-webkit-font-smoothing:antialiased;
-  padding-bottom:calc(var(--nav) + 16px);
-  overscroll-behavior-y:contain;
+  padding-bottom:calc(var(--nav) + 16px);overscroll-behavior-y:contain;
+  transition:background .2s,color .2s;
 }
 :focus-visible{outline:2px solid var(--eur);outline-offset:2px}
 .wrap{max-width:540px;margin:0 auto;padding:0 16px}
 
-/* header */
-header{
-  padding:calc(18px + env(safe-area-inset-top)) 0 2px;
-  display:flex;align-items:flex-start;justify-content:space-between;gap:12px;
-}
+header{padding:calc(18px + env(safe-area-inset-top)) 0 2px;display:flex;align-items:flex-start;justify-content:space-between;gap:12px}
 .brand{font-size:11px;letter-spacing:.24em;text-transform:uppercase;color:var(--dim);font-weight:700;line-height:1.6}
 .brand b{color:var(--bone);font-weight:700}
 .days{font-family:var(--mono);font-size:11px;color:var(--muted);text-align:right;line-height:1.6}
 .days b{color:var(--bone);font-weight:600}
 
-/* tab bar */
 nav.tabs{
   position:fixed;left:0;right:0;bottom:0;z-index:30;
-  background:linear-gradient(to top,rgba(12,29,36,.99) 60%,rgba(12,29,36,.86));
+  background:linear-gradient(to top,rgba(var(--navbg),.99) 60%,rgba(var(--navbg),.86));
   -webkit-backdrop-filter:blur(14px);backdrop-filter:blur(14px);
   border-top:1px solid var(--line);
-  padding:9px 10px calc(9px + env(safe-area-inset-bottom));
-  display:flex;gap:4px;justify-content:center;
+  padding:9px 10px calc(9px + env(safe-area-inset-bottom));display:flex;gap:4px;justify-content:center;
 }
 nav.tabs button{
   flex:1;max-width:130px;background:none;border:0;color:var(--dim);cursor:pointer;
   font-family:var(--sans);font-size:10px;font-weight:700;letter-spacing:.12em;
-  padding:7px 2px;display:flex;flex-direction:column;align-items:center;gap:6px;
-  transition:color .15s;
+  padding:7px 2px;display:flex;flex-direction:column;align-items:center;gap:6px;transition:color .15s;
 }
 nav.tabs button .mark{width:18px;height:2px;border-radius:2px;background:transparent;transition:background .15s}
 nav.tabs button[aria-selected=true]{color:var(--bone)}
 nav.tabs button[aria-selected=true] .mark{background:var(--eur)}
 .tabpane[hidden]{display:none}
 
-/* ring */
 .ringwrap{position:relative;margin:10px 0 2px}
-.ringwrap::before{
-  content:"";position:absolute;left:50%;top:44%;width:280px;height:280px;
-  transform:translate(-50%,-50%);border-radius:50%;
-  background:radial-gradient(circle,rgba(233,166,60,.10),transparent 62%);pointer-events:none;
-}
+.ringwrap::before{content:"";position:absolute;left:50%;top:44%;width:280px;height:280px;transform:translate(-50%,-50%);border-radius:50%;background:radial-gradient(circle,var(--glow),transparent 62%);pointer-events:none}
 .ringbox{position:relative;display:flex;justify-content:center}
 svg.ring{width:min(248px,68vw);height:min(248px,68vw);transform:rotate(-90deg)}
 svg.ring circle{fill:none;stroke-linecap:butt}
@@ -90,7 +84,6 @@ svg.ring circle{fill:none;stroke-linecap:butt}
 .ringcenter .sub b{color:var(--bone);font-weight:600}
 .over .ringcenter .big{color:var(--danger)}
 
-/* chips */
 .chips{display:grid;grid-template-columns:repeat(3,1fr);gap:7px;margin-top:16px}
 .chip{background:var(--panel);border:1px solid var(--line);border-radius:13px;padding:11px 10px}
 .chip .cur{display:flex;align-items:center;gap:6px;font-size:9.5px;letter-spacing:.16em;text-transform:uppercase;color:var(--dim);font-weight:700}
@@ -98,48 +91,39 @@ svg.ring circle{fill:none;stroke-linecap:butt}
 .chip .amt{font-family:var(--mono);font-size:16px;font-weight:600;margin-top:6px;font-variant-numeric:tabular-nums;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .chip .eq{font-family:var(--mono);font-size:10.5px;color:var(--dim);margin-top:2px}
 
-.cardrow{
-  display:flex;align-items:center;justify-content:space-between;gap:10px;margin-top:7px;
-  padding:12px 14px;border-radius:13px;background:var(--panel);border:1px dashed rgba(208,138,150,.42);
-}
+.cardrow{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-top:7px;padding:12px 14px;border-radius:13px;background:var(--panel);border:1px dashed var(--card)}
 .cardrow .t{font-size:12px;color:var(--card);font-weight:700}
 .cardrow .n{font-family:var(--mono);font-size:10.5px;color:var(--dim);margin-top:1px}
 .cardrow .v{font-family:var(--mono);font-size:18px;font-weight:600;color:var(--card);font-variant-numeric:tabular-nums}
 
 section{margin-top:24px}
-h2{
-  font-size:10px;letter-spacing:.22em;text-transform:uppercase;color:var(--dim);font-weight:700;
-  margin:0 0 10px;display:flex;justify-content:space-between;align-items:baseline;gap:10px;
-}
+h2{font-size:10px;letter-spacing:.22em;text-transform:uppercase;color:var(--dim);font-weight:700;margin:0 0 10px;display:flex;justify-content:space-between;align-items:baseline;gap:10px}
 h2 .side{letter-spacing:0;text-transform:none;font-size:11px;font-family:var(--mono);color:var(--dim)}
 .panel{background:var(--panel);border:1px solid var(--line);border-radius:15px;padding:14px}
 
-/* forms */
 label{display:block;font-size:10.5px;color:var(--dim);margin:0 0 5px;letter-spacing:.06em;font-weight:600}
 input,select,button{font-family:inherit;font-size:15px}
-input,select{
-  width:100%;background:var(--panel2);border:1px solid var(--line);color:var(--bone);
-  border-radius:11px;padding:12px;outline:none;appearance:none;-webkit-appearance:none;
-}
-select{background-image:linear-gradient(45deg,transparent 50%,var(--muted) 50%),linear-gradient(135deg,var(--muted) 50%,transparent 50%);
-  background-position:calc(100% - 17px) 51%,calc(100% - 12px) 51%;background-size:5px 5px,5px 5px;background-repeat:no-repeat;padding-right:34px}
+input,select{width:100%;background:var(--panel2);border:1px solid var(--line);color:var(--bone);border-radius:11px;padding:12px;outline:none;appearance:none;-webkit-appearance:none}
+select{background-image:linear-gradient(45deg,transparent 50%,var(--muted) 50%),linear-gradient(135deg,var(--muted) 50%,transparent 50%);background-position:calc(100% - 17px) 51%,calc(100% - 12px) 51%;background-size:5px 5px,5px 5px;background-repeat:no-repeat;padding-right:34px}
 input:focus,select:focus{border-color:var(--mkd);box-shadow:0 0 0 3px rgba(62,157,178,.16)}
 input[type=number]{font-family:var(--mono);font-variant-numeric:tabular-nums}
 input[type=number]::-webkit-outer-spin-button,input[type=number]::-webkit-inner-spin-button{-webkit-appearance:none;margin:0}
+input[type=date],input[type=time]{font-family:var(--mono);min-height:45px}
 .row{display:grid;gap:9px;margin-bottom:10px}
 .r2{grid-template-columns:1fr 1fr}
 .r3{grid-template-columns:1fr 1fr 1fr}
-.seg{display:grid;grid-template-columns:1fr 1fr;border:1px solid var(--line);border-radius:11px;overflow:hidden}
-.seg button{background:var(--panel2);border:0;color:var(--dim);padding:12px 6px;font-size:13px;font-weight:700;cursor:pointer;transition:background .12s}
+.seg{display:grid;grid-auto-flow:column;grid-auto-columns:1fr;border:1px solid var(--line);border-radius:11px;overflow:hidden}
+.seg button{background:var(--panel2);border:0;color:var(--dim);padding:12px 4px;font-size:13px;font-weight:700;cursor:pointer;transition:background .12s}
 .seg button[aria-pressed=true]{background:var(--bone);color:var(--ink)}
-.seg button[aria-pressed=true].cc{background:var(--card);color:#2A1219}
+.seg button[aria-pressed=true].cc{background:var(--card);color:#fff}
 .btn{width:100%;background:var(--bone);color:var(--ink);border:0;border-radius:12px;padding:14px;font-weight:700;font-size:15px;cursor:pointer}
 .btn:active{transform:translateY(1px)}
 .btn.ghost{background:transparent;color:var(--muted);border:1px solid var(--line2);font-weight:600}
 .btn.sm{padding:11px;font-size:13px}
-.btn.danger{color:var(--danger);border-color:rgba(224,101,79,.4)}
+.btn.danger{color:var(--danger);border-color:var(--danger)}
+.editbar{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:10px 13px;border-radius:11px;background:rgba(233,166,60,.13);border:1px solid var(--eur);margin-bottom:11px;font-size:12.5px;color:var(--bone)}
+.editbar button{background:none;border:0;color:var(--eur);font-weight:700;font-size:12.5px;cursor:pointer;text-decoration:underline;padding:0;flex:none}
 
-/* pocket */
 .pocket{display:grid;grid-template-columns:repeat(3,1fr);gap:7px}
 .pk{background:var(--panel2);border-radius:11px;padding:11px 8px;text-align:center}
 .pk .l{font-size:9.5px;color:var(--dim);letter-spacing:.14em;text-transform:uppercase;font-weight:700}
@@ -147,24 +131,22 @@ input[type=number]::-webkit-outer-spin-button,input[type=number]::-webkit-inner-
 .pk .r{font-family:var(--mono);font-size:9.5px;color:var(--dim);margin-top:2px}
 .pk.neg .v{color:var(--danger)}
 
-/* category bars */
 .cat{margin-bottom:11px}
 .cat:last-child{margin-bottom:0}
-.cat .top{display:flex;justify-content:space-between;align-items:baseline;font-size:13px;margin-bottom:5px}
-.cat .top .n{font-weight:600}
+.cat .top{display:flex;justify-content:space-between;align-items:baseline;font-size:13px;margin-bottom:5px;gap:8px}
+.cat .top .n{font-weight:600;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .cat .top .v{font-family:var(--mono);font-size:13px;font-variant-numeric:tabular-nums}
 .cat .top .p{font-family:var(--mono);font-size:10.5px;color:var(--dim);margin-left:7px}
-.track{height:6px;background:var(--panel2);border-radius:4px;overflow:hidden}
-.track i{display:block;height:100%;border-radius:4px;background:var(--eur)}
+.trackbar{height:6px;background:var(--panel2);border-radius:4px;overflow:hidden}
+.trackbar i{display:block;height:100%;border-radius:4px;background:var(--eur)}
 
-/* analyzer */
 .calcin{display:grid;grid-template-columns:1fr 122px;gap:9px}
 #cAmount{font-size:30px;font-weight:600;padding:14px;text-align:right;letter-spacing:-.02em}
 .out{display:grid;gap:7px;margin-top:14px}
 .o{display:flex;align-items:baseline;justify-content:space-between;gap:10px;padding:13px 15px;background:var(--panel2);border-radius:12px}
 .o .k{font-size:10px;letter-spacing:.16em;text-transform:uppercase;color:var(--dim);font-weight:700}
 .o .n{font-family:var(--mono);font-size:23px;font-weight:600;font-variant-numeric:tabular-nums}
-.o.primary{background:rgba(233,166,60,.11);border:1px solid rgba(233,166,60,.32)}
+.o.primary{background:var(--glow);border:1px solid var(--eur)}
 .o.primary .n{color:var(--eur)}
 .verdict{margin-top:12px;padding:13px 15px;border-radius:12px;background:var(--panel2);font-size:13px;line-height:1.55;color:var(--muted)}
 .verdict b{color:var(--bone)}
@@ -176,40 +158,46 @@ table.ref td{padding:8px 0;border-top:1px solid var(--line);text-align:right;fon
 table.ref td:first-child{text-align:left;color:var(--muted)}
 table.ref td.e{color:var(--eur);font-weight:600}
 
-/* lists */
 .day{font-family:var(--mono);font-size:10.5px;color:var(--dim);margin:18px 0 8px;display:flex;justify-content:space-between;letter-spacing:.04em}
 ul{list-style:none;margin:0;padding:0}
 li.item{display:flex;align-items:stretch;gap:11px;padding:11px 12px;background:var(--panel);border:1px solid var(--line);border-radius:13px;margin-bottom:7px}
+li.item.editing{border-color:var(--eur)}
 li.item .bar{width:3px;border-radius:2px;flex:none}
-li.item .mid{flex:1;min-width:0;align-self:center}
+li.item .tap{flex:1;min-width:0;align-self:center;background:none;border:0;padding:0;text-align:left;color:inherit;font-family:inherit;cursor:pointer;display:flex;align-items:center;gap:10px}
+li.item .mid{flex:1;min-width:0}
 li.item .ttl{font-size:14px;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 li.item .meta{font-size:10.5px;color:var(--dim);margin-top:2px;display:flex;gap:8px;flex-wrap:wrap}
 li.item .meta .cc{color:var(--card);font-weight:700}
-li.item .val{font-family:var(--mono);font-size:15px;font-weight:600;text-align:right;flex:none;align-self:center;font-variant-numeric:tabular-nums}
+li.item .meta .tm{font-family:var(--mono)}
+li.item .val{font-family:var(--mono);font-size:15px;font-weight:600;text-align:right;flex:none;font-variant-numeric:tabular-nums}
 li.item .val small{display:block;font-size:10px;color:var(--dim);font-weight:400;margin-top:1px}
 .del{background:none;border:0;color:var(--dim);font-size:20px;line-height:1;padding:0 0 0 4px;cursor:pointer;flex:none;align-self:center}
 .empty{color:var(--dim);font-size:13px;text-align:center;padding:26px 14px;border:1px dashed var(--line);border-radius:13px;line-height:1.6}
-li.ex{display:flex;align-items:center;gap:10px;padding:11px 12px;background:var(--panel2);border-radius:11px;margin-bottom:6px;font-family:var(--mono);font-size:13px}
-li.ex .g{flex:1}
-li.ex .rate{color:var(--dim);font-size:11px}
+li.ex{display:flex;align-items:center;gap:10px;padding:11px 12px;background:var(--panel2);border-radius:11px;margin-bottom:6px;font-size:13px}
+li.ex.editing{outline:1px solid var(--eur)}
+li.ex .tap{flex:1;min-width:0;background:none;border:0;padding:0;text-align:left;color:inherit;font-family:var(--mono);font-size:13px;cursor:pointer}
+li.ex .rate{color:var(--dim);font-size:11px;font-family:var(--mono)}
+li.ex .tm{display:block;color:var(--dim);font-size:10px;margin-top:2px}
+
+.taglist{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:10px}
+.tag{display:inline-flex;align-items:center;gap:6px;background:var(--panel2);border:1px solid var(--line);border-radius:99px;padding:6px 8px 6px 11px;font-size:12.5px}
+.tag button{background:none;border:0;color:var(--dim);font-size:15px;line-height:1;cursor:pointer;padding:0}
+.addcat{display:grid;grid-template-columns:1fr 88px;gap:8px}
 
 .foot{display:grid;grid-template-columns:1fr 1fr;gap:9px}
 .note{font-size:11px;color:var(--dim);margin-top:10px;line-height:1.55}
 .hidden{display:none!important}
 .meta-line{font-family:var(--mono);font-size:10.5px;color:var(--dim);text-align:center;margin-top:18px;line-height:1.7}
 
-/* toast */
 .toast{
-  position:fixed;left:50%;transform:translateX(-50%) translateY(8px);
-  bottom:calc(var(--nav) + 12px);z-index:40;
-  background:var(--bone);color:var(--ink);font-size:13px;font-weight:600;
-  padding:11px 14px;border-radius:99px;display:flex;align-items:center;gap:12px;
-  opacity:0;pointer-events:none;transition:opacity .2s,transform .2s;
-  box-shadow:0 8px 24px rgba(0,0,0,.4);max-width:calc(100vw - 32px);
+  position:fixed;left:50%;transform:translateX(-50%) translateY(8px);bottom:calc(var(--nav) + 12px);z-index:40;
+  background:var(--bone);color:var(--ink);font-size:13px;font-weight:600;padding:11px 14px;border-radius:99px;
+  display:flex;align-items:center;gap:12px;opacity:0;pointer-events:none;transition:opacity .2s,transform .2s;
+  box-shadow:var(--shadow);max-width:calc(100vw - 32px);
 }
 .toast.on{opacity:1;transform:translateX(-50%) translateY(0);pointer-events:auto}
-.toast button{background:none;border:0;color:var(--ink);font-weight:800;font-size:13px;cursor:pointer;text-decoration:underline;padding:0}
-@media(prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
+.toast button{background:none;border:0;color:var(--ink);font-weight:800;font-size:13px;cursor:pointer;text-decoration:underline;padding:0;flex:none}
+@media(prefers-reduced-motion:reduce){*{transition:none!important}}
 @media(prefers-reduced-motion:no-preference){svg.ring circle{transition:stroke-dasharray .55s cubic-bezier(.4,0,.2,1),stroke-dashoffset .55s cubic-bezier(.4,0,.2,1)}}
 </style>
 </head>
@@ -221,12 +209,12 @@ li.ex .rate{color:var(--dim);font-size:11px}
   <div class="days" id="dayCount"></div>
 </header>
 
-<!-- ============ ÖZET ============ -->
+<!-- ÖZET -->
 <div class="tabpane" id="pane-ozet">
   <div class="ringwrap">
     <div class="ringbox" id="ringBox">
       <svg class="ring" viewBox="0 0 200 200" aria-hidden="true">
-        <circle cx="100" cy="100" r="82" stroke="rgba(242,237,227,.08)" stroke-width="15"></circle>
+        <circle cx="100" cy="100" r="82" stroke="var(--track)" stroke-width="15"></circle>
         <circle id="arcEUR" cx="100" cy="100" r="82" stroke="var(--eur)" stroke-width="15"></circle>
         <circle id="arcMKD" cx="100" cy="100" r="82" stroke="var(--mkd)" stroke-width="15"></circle>
         <circle id="arcALL" cx="100" cy="100" r="82" stroke="var(--all)" stroke-width="15"></circle>
@@ -271,11 +259,15 @@ li.ex .rate{color:var(--dim);font-size:11px}
   </section>
 </div>
 
-<!-- ============ EKLE ============ -->
+<!-- EKLE -->
 <div class="tabpane" id="pane-ekle" hidden>
   <section style="margin-top:16px">
-    <h2>Harcama ekle</h2>
+    <h2 id="formTitle">Harcama ekle</h2>
     <div class="panel">
+      <div class="editbar hidden" id="editBar">
+        <span id="editBarText">Kaydı düzenliyorsun</span>
+        <button type="button" id="cancelEdit">Vazgeç</button>
+      </div>
       <div class="row r2">
         <div><label for="eAmount">Tutar</label><input id="eAmount" type="number" inputmode="decimal" step="0.01" min="0" placeholder="0"></div>
         <div><label for="eCur">Para birimi</label>
@@ -284,16 +276,14 @@ li.ex .rate{color:var(--dim);font-size:11px}
       <div class="row r2">
         <div><label>Ödeme</label>
           <div class="seg"><button type="button" id="mCash" aria-pressed="true">Nakit</button><button type="button" id="mCard" class="cc" aria-pressed="false">Kart</button></div></div>
-        <div><label for="eCat">Kategori</label>
-          <select id="eCat">
-            <option>Yemek</option><option>Kahve / atıştırma</option><option>Market</option>
-            <option>Ulaşım</option><option>Konaklama</option><option>Gezi / giriş</option>
-            <option>Hediye</option><option>Diğer</option>
-          </select></div>
+        <div><label for="eCat">Kategori</label><select id="eCat"></select></div>
       </div>
       <div class="row"><div><label for="eNote">Açıklama <span style="opacity:.6">(isteğe bağlı)</span></label>
         <input id="eNote" type="text" placeholder="Ohrid'de akşam yemeği" autocomplete="off"></div></div>
-      <div class="row"><div><label for="eDate">Tarih</label><input id="eDate" type="date"></div></div>
+      <div class="row r2">
+        <div><label for="eDate">Tarih</label><input id="eDate" type="date"></div>
+        <div><label for="eTime">Saat</label><input id="eTime" type="time"></div>
+      </div>
       <button class="btn" id="addExpense">Harcamayı kaydet</button>
     </div>
   </section>
@@ -301,10 +291,11 @@ li.ex .rate{color:var(--dim);font-size:11px}
   <section>
     <h2>Harcamalar <span class="side" id="expCount"></span></h2>
     <div id="expList"></div>
+    <div class="note">Bir kalemin üstüne dokunarak düzenleyebilirsin.</div>
   </section>
 </div>
 
-<!-- ============ FİYAT ============ -->
+<!-- FİYAT -->
 <div class="tabpane" id="pane-kur" hidden>
   <section style="margin-top:16px">
     <h2>Fiyat çevir <span class="side" id="calcRateNote"></span></h2>
@@ -338,6 +329,10 @@ li.ex .rate{color:var(--dim);font-size:11px}
   <section>
     <h2>Bozdurma <span class="side" id="exCount"></span></h2>
     <div class="panel">
+      <div class="editbar hidden" id="exEditBar">
+        <span>Bozdurmayı düzenliyorsun</span>
+        <button type="button" id="cancelExEdit">Vazgeç</button>
+      </div>
       <div class="row r3">
         <div><label for="xEur">Verilen €</label><input id="xEur" type="number" inputmode="decimal" step="0.01" min="0" placeholder="100"></div>
         <div><label for="xCur">Alınan</label><select id="xCur"><option value="MKD">Denar</option><option value="ALL">Lek</option></select></div>
@@ -345,14 +340,25 @@ li.ex .rate{color:var(--dim);font-size:11px}
       </div>
       <button class="btn ghost sm" id="addExchange">Bozdurmayı kaydet</button>
       <ul id="exList" style="margin-top:12px"></ul>
-      <div class="note">Bozdurma girdiğin an, o para birimindeki bütün harcamalar bu gerçek kurdan euroya çevrilir.</div>
+      <div class="note">Bozdurma girdiğin an, o para birimindeki bütün harcamalar bu gerçek kurdan euroya çevrilir. Düzenlemek için üstüne dokun.</div>
     </div>
   </section>
 </div>
 
-<!-- ============ AYARLAR ============ -->
+<!-- AYARLAR -->
 <div class="tabpane" id="pane-ayar" hidden>
   <section style="margin-top:16px">
+    <h2>Görünüm</h2>
+    <div class="panel">
+      <div class="seg" id="themeSeg">
+        <button type="button" data-theme-opt="auto" aria-pressed="true">Sistem</button>
+        <button type="button" data-theme-opt="light" aria-pressed="false">Açık</button>
+        <button type="button" data-theme-opt="dark" aria-pressed="false">Koyu</button>
+      </div>
+    </div>
+  </section>
+
+  <section>
     <h2>Bütçe</h2>
     <div class="panel">
       <div class="row"><div><label for="bBudget">Toplam nakit bütçe (€)</label>
@@ -380,6 +386,18 @@ li.ex .rate{color:var(--dim);font-size:11px}
   </section>
 
   <section>
+    <h2>Kategoriler <span class="side" id="catCount"></span></h2>
+    <div class="panel">
+      <div class="taglist" id="catTags"></div>
+      <div class="addcat">
+        <input id="newCat" type="text" placeholder="Yeni kategori" autocomplete="off" maxlength="28">
+        <button class="btn ghost sm" id="addCat">Ekle</button>
+      </div>
+      <div class="note">Kullanılmış bir kategoriyi silemezsin — önce o harcamaları başka kategoriye taşı.</div>
+    </div>
+  </section>
+
+  <section>
     <h2>Veri</h2>
     <div class="panel">
       <div class="foot">
@@ -388,7 +406,7 @@ li.ex .rate{color:var(--dim);font-size:11px}
       </div>
       <input type="file" id="importFile" accept="application/json,.json" class="hidden">
       <button class="btn ghost sm danger" id="resetBtn" style="margin-top:9px">Tüm kayıtları sil</button>
-      <div class="note">Kayıtlar yalnızca bu telefonda duruyor; hiçbir sunucuya gitmiyor. Ara ara yedek al.</div>
+      <div class="note">Eski sürümden aldığın yedek de yüklenir; saati olmayan kayıtlara otomatik saat atanır. Kayıtlar yalnızca bu telefonda durur.</div>
     </div>
   </section>
 
@@ -415,17 +433,16 @@ li.ex .rate{color:var(--dim);font-size:11px}
 
 <script>
 "use strict";
-const APP_VERSION = "1.0.0";
-
-/* ---------- storage ---------- */
+const APP_VERSION = "1.1.0";
 const KEY = "balkan-ledger-v1";
 const TABKEY = "balkan-ledger-tab";
+const THEMEKEY = "balkan-ledger-theme";
+
 const store = {
   async load(){
     try{
       if (window.storage && window.storage.get){
-        try{ const r = await window.storage.get(KEY); if (r && r.value) return JSON.parse(r.value); }
-        catch(e){}
+        try{ const r = await window.storage.get(KEY); if (r && r.value) return JSON.parse(r.value); }catch(e){}
         return null;
       }
       const raw = localStorage.getItem(KEY);
@@ -446,17 +463,27 @@ const CUR = {
   MKD:{sym:"ден", dec:0, color:"var(--mkd)", name:"Denar"},
   ALL:{sym:"L", dec:0, color:"var(--all)", name:"Lek"}
 };
+const BASE_CATS = [
+  "Yemek","Kahvaltı","Kahve / atıştırma","Tatlı / dondurma","Bar / içki",
+  "Market","Su / içecek","Şehir içi ulaşım","Şehirlerarası otobüs","Taksi / transfer",
+  "Konaklama","Müze / giriş","Tur / tekne","Hediyelik","Kıyafet",
+  "Eczane / sağlık","SIM / internet","Emanet / tuvalet","Bahşiş","Diğer"
+];
 const DEFAULTS = {
   budget: 385,
   start: "2026-08-12",
   end: "2026-08-20",
   rates: { MKD: 61.5, ALL: 98, TRY: 56, meal: 7.5 },
+  categories: [...BASE_CATS],
   exchanges: [],
   expenses: []
 };
+
 let state = structuredClone(DEFAULTS);
 let method = "cash";
-let lastDeleted = null;
+let editingId = null;
+let editingExId = null;
+let themePref = "auto";
 
 const $ = id => document.getElementById(id);
 const uid = () => Date.now().toString(36) + Math.random().toString(36).slice(2,7);
@@ -465,7 +492,39 @@ const fmt = (n,d) => num(n).toLocaleString("tr-TR",{minimumFractionDigits:d,maxi
 const money = (n,c) => fmt(n, CUR[c].dec) + " " + CUR[c].sym;
 const eur = n => fmt(n,2) + " €";
 const lira = n => fmt(n,0) + " ₺";
+const esc = s => String(s).replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
 
+function todayISO(){
+  const d = new Date();
+  return new Date(d.getTime() - d.getTimezoneOffset()*60000).toISOString().slice(0,10);
+}
+function nowHM(){
+  const d = new Date();
+  return String(d.getHours()).padStart(2,"0") + ":" + String(d.getMinutes()).padStart(2,"0");
+}
+function trDate(iso){
+  const d = new Date(iso+"T12:00:00");
+  return isNaN(d) ? iso : d.toLocaleDateString("tr-TR",{day:"numeric",month:"long",weekday:"short"});
+}
+const dayDiff = (a,b) => Math.round((new Date(b+"T12:00:00") - new Date(a+"T12:00:00"))/86400000);
+
+/* ---------- tema ---------- */
+const mq = window.matchMedia("(prefers-color-scheme: light)");
+function applyTheme(){
+  const resolved = themePref === "auto" ? (mq.matches ? "light" : "dark") : themePref;
+  document.documentElement.setAttribute("data-theme", resolved);
+  $("themeColor").setAttribute("content", resolved === "light" ? "#F3EFE6" : "#0C1D24");
+  document.querySelectorAll("#themeSeg button").forEach(b =>
+    b.setAttribute("aria-pressed", b.dataset.themeOpt === themePref));
+}
+mq.addEventListener("change", () => { if (themePref === "auto") applyTheme(); });
+document.querySelectorAll("#themeSeg button").forEach(b => b.onclick = () => {
+  themePref = b.dataset.themeOpt;
+  try{ localStorage.setItem(THEMEKEY, themePref); }catch(e){}
+  applyTheme();
+});
+
+/* ---------- kur ---------- */
 function rateOf(cur){
   if (cur === "EUR") return 1;
   const ex = state.exchanges.filter(x => x.cur === cur);
@@ -475,17 +534,6 @@ function rateOf(cur){
 }
 const isRealRate = c => c === "EUR" || state.exchanges.filter(x=>x.cur===c).reduce((s,x)=>s+x.eurGiven,0) > 0;
 const toEur = (a,c) => c === "EUR" ? a : a / rateOf(c);
-
-function todayISO(){
-  const d = new Date();
-  return new Date(d.getTime() - d.getTimezoneOffset()*60000).toISOString().slice(0,10);
-}
-function trDate(iso){
-  const d = new Date(iso+"T12:00:00");
-  return isNaN(d) ? iso : d.toLocaleDateString("tr-TR",{day:"numeric",month:"long",weekday:"short"});
-}
-const dayDiff = (a,b) => Math.round((new Date(b+"T12:00:00") - new Date(a+"T12:00:00"))/86400000);
-const esc = s => String(s).replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
 
 let toastTimer;
 function toast(msg, undo){
@@ -499,7 +547,6 @@ function toast(msg, undo){
 }
 function hideToast(){ $("toast").classList.remove("on"); }
 
-/* ---------- hesap ---------- */
 function calc(){
   const cash = {EUR:0,MKD:0,ALL:0}, card = {EUR:0,MKD:0,ALL:0};
   for (const e of state.expenses) (e.method === "card" ? card : cash)[e.cur] += e.amount;
@@ -516,9 +563,7 @@ const C = 2 * Math.PI * 82;
 
 function render(){
   const k = calc();
-  const budget = num(state.budget);
-
-  const denom = Math.max(budget, k.spent, 0.0001);
+  const denom = Math.max(num(state.budget), k.spent, 0.0001);
   let offset = 0;
   for (const cur of ["EUR","MKD","ALL"]){
     const len = Math.max(0, k.cashEur[cur]) / denom * C;
@@ -531,8 +576,7 @@ function render(){
   $("spentTotal").textContent = eur(k.spent);
   $("ringBox").classList.toggle("over", k.remain < 0);
   $("remainLine").innerHTML = k.remain >= 0
-    ? `<b>${eur(k.remain)}</b> kaldı`
-    : `<b>${eur(Math.abs(k.remain))}</b> aşıldı`;
+    ? `<b>${eur(k.remain)}</b> kaldı` : `<b>${eur(Math.abs(k.remain))}</b> aşıldı`;
 
   renderHeader(k);
 
@@ -566,24 +610,20 @@ function render(){
 function renderHeader(k){
   const el = $("dayCount");
   if (!state.start || !state.end){ el.textContent = ""; return; }
-  const today = todayISO();
-  const n = dayDiff(state.start, today) + 1;
+  const n = dayDiff(state.start, todayISO()) + 1;
   const total = dayDiff(state.start, state.end) + 1;
   if (n < 1){ el.innerHTML = `<b>${Math.abs(n)+1} gün</b> kaldı`; return; }
-  if (n > total){ el.innerHTML = `yolculuk bitti`; return; }
+  if (n > total){ el.innerHTML = "yolculuk bitti"; return; }
   const left = Math.max(1, total - n + 1);
   el.innerHTML = k.remain > 0
     ? `<b>${n}/${total}</b>. gün<br>günlük ${fmt(k.remain/left,0)} €`
     : `<b>${n}/${total}</b>. gün`;
 }
 
-function renderCategories(k){
+function renderCategories(){
   const p = $("catPanel");
   const sums = {};
-  for (const e of state.expenses){
-    const v = toEur(e.amount, e.cur);
-    sums[e.cat] = (sums[e.cat] || 0) + v;
-  }
+  for (const e of state.expenses) sums[e.cat] = (sums[e.cat] || 0) + toEur(e.amount, e.cur);
   const rows = Object.entries(sums).sort((a,b)=>b[1]-a[1]);
   const total = rows.reduce((s,r)=>s+r[1],0);
   $("catTotal").textContent = total ? eur(total) : "";
@@ -595,28 +635,35 @@ function renderCategories(k){
   p.innerHTML = rows.map(([name,v]) => `
     <div class="cat">
       <div class="top"><span class="n">${esc(name)}</span>
-        <span><span class="v">${eur(v)}</span><span class="p">%${fmt(v/total*100,0)}</span></span></div>
-      <div class="track"><i style="width:${Math.max(3, v/max*100)}%"></i></div>
+        <span style="flex:none"><span class="v">${eur(v)}</span><span class="p">%${fmt(v/total*100,0)}</span></span></div>
+      <div class="trackbar"><i style="width:${Math.max(3, v/max*100)}%"></i></div>
     </div>`).join("");
 }
 
 function renderExchanges(){
   const ul = $("exList"); ul.innerHTML = "";
   $("exCount").textContent = state.exchanges.length ? `${state.exchanges.length} kayıt` : "";
-  const sorted = [...state.exchanges].sort((a,b)=>String(b.date).localeCompare(String(a.date)));
+  const sorted = [...state.exchanges].sort((a,b)=>
+    (b.date+" "+(b.time||"")).localeCompare(a.date+" "+(a.time||"")));
   for (const x of sorted){
     const li = document.createElement("li");
-    li.className = "ex";
-    li.innerHTML = `<span class="g">${fmt(x.eurGiven,0)} € → ${money(x.local,x.cur)}</span><span class="rate">${fmt(x.local/x.eurGiven,2)}</span>`;
+    li.className = "ex" + (x.id === editingExId ? " editing" : "");
+    const tap = document.createElement("button");
+    tap.className = "tap";
+    tap.innerHTML = `${fmt(x.eurGiven,0)} € → ${money(x.local,x.cur)}<span class="tm">${trDate(x.date)}${x.time ? " · "+x.time : ""}</span>`;
+    tap.onclick = () => startExEdit(x);
+    const rate = document.createElement("span");
+    rate.className = "rate"; rate.textContent = fmt(x.local/x.eurGiven,2);
     const b = document.createElement("button");
     b.className = "del"; b.textContent = "×"; b.setAttribute("aria-label","Bozdurmayı sil");
     b.onclick = () => {
       const kept = x;
+      if (editingExId === x.id) cancelExEdit();
       state.exchanges = state.exchanges.filter(i=>i.id!==x.id);
       persist();
       toast("Bozdurma silindi", () => { state.exchanges.push(kept); persist(); });
     };
-    li.appendChild(b); ul.appendChild(li);
+    li.append(tap, rate, b); ul.appendChild(li);
   }
 }
 
@@ -630,7 +677,7 @@ function renderExpenses(){
   const byDay = {};
   for (const e of state.expenses) (byDay[e.date] = byDay[e.date] || []).push(e);
   for (const d of Object.keys(byDay).sort().reverse()){
-    const items = byDay[d];
+    const items = byDay[d].sort((a,b)=>String(b.time||"").localeCompare(String(a.time||"")));
     const dayEur = items.filter(i=>i.method!=="card").reduce((s,i)=>s+toEur(i.amount,i.cur),0);
     const head = document.createElement("div");
     head.className = "day";
@@ -638,43 +685,82 @@ function renderExpenses(){
     box.appendChild(head);
     const ul = document.createElement("ul");
     for (const e of items){
-      const li = document.createElement("li"); li.className = "item";
-      const bar = document.createElement("div"); bar.className = "bar";
+      const li = document.createElement("li");
+      li.className = "item" + (e.id === editingId ? " editing" : "");
+      const bar = document.createElement("div");
+      bar.className = "bar";
       bar.style.background = e.method === "card" ? "var(--card)" : CUR[e.cur].color;
-      const mid = document.createElement("div"); mid.className = "mid";
-      mid.innerHTML = `<div class="ttl">${esc(e.note || e.cat)}</div>
-        <div class="meta">${e.note ? `<span>${esc(e.cat)}</span>` : ""}${e.method === "card" ? `<span class="cc">Kart</span>` : ""}</div>`;
-      const val = document.createElement("div"); val.className = "val";
-      val.innerHTML = money(e.amount,e.cur) + (e.cur !== "EUR" ? `<small>${eur(toEur(e.amount,e.cur))}</small>` : "");
+      const tap = document.createElement("button");
+      tap.className = "tap";
+      tap.innerHTML = `<span class="mid">
+          <span class="ttl" style="display:block">${esc(e.note || e.cat)}</span>
+          <span class="meta">${e.time ? `<span class="tm">${esc(e.time)}</span>` : ""}
+          ${e.note ? `<span>${esc(e.cat)}</span>` : ""}
+          ${e.method === "card" ? `<span class="cc">Kart</span>` : ""}</span>
+        </span>
+        <span class="val">${money(e.amount,e.cur)}${e.cur !== "EUR" ? `<small>${eur(toEur(e.amount,e.cur))}</small>` : ""}</span>`;
+      tap.onclick = () => startEdit(e);
       const del = document.createElement("button");
       del.className = "del"; del.textContent = "×"; del.setAttribute("aria-label","Harcamayı sil");
       del.onclick = () => {
         const kept = e;
+        if (editingId === e.id) cancelEdit();
         state.expenses = state.expenses.filter(i=>i.id!==e.id);
         persist();
         toast("Silindi", () => { state.expenses.push(kept); persist(); });
       };
-      li.append(bar, mid, val, del); ul.appendChild(li);
+      li.append(bar, tap, del); ul.appendChild(li);
     }
     box.appendChild(ul);
   }
 }
+
+/* ---------- kategoriler ---------- */
+function fillCatSelect(){
+  const sel = $("eCat"), cur = sel.value;
+  sel.innerHTML = state.categories.map(c => `<option>${esc(c)}</option>`).join("");
+  if (state.categories.includes(cur)) sel.value = cur;
+}
+function renderCatTags(){
+  const box = $("catTags");
+  $("catCount").textContent = `${state.categories.length} adet`;
+  const used = new Set(state.expenses.map(e => e.cat));
+  box.innerHTML = "";
+  for (const c of state.categories){
+    const t = document.createElement("span");
+    t.className = "tag";
+    t.textContent = c;
+    if (!used.has(c) && state.categories.length > 1){
+      const b = document.createElement("button");
+      b.textContent = "×"; b.setAttribute("aria-label", c + " kategorisini sil");
+      b.onclick = () => { state.categories = state.categories.filter(x=>x!==c); fillCatSelect(); persist(); };
+      t.appendChild(b);
+    }
+    box.appendChild(t);
+  }
+}
+$("addCat").onclick = () => {
+  const v = $("newCat").value.trim();
+  if (!v) return;
+  if (state.categories.some(c => c.toLowerCase() === v.toLowerCase())){ toast("Bu kategori zaten var"); return; }
+  state.categories.push(v);
+  $("newCat").value = "";
+  fillCatSelect(); persist(); toast("Kategori eklendi");
+};
 
 /* ---------- fiyat çevirici ---------- */
 function renderCalc(){
   const cur = $("cCur").value;
   const amt = num($("cAmount").value);
   const e = toEur(amt, cur);
-  const tl = e * num(state.rates.TRY);
   const primary = cur === "EUR" ? "MKD" : "EUR";
   const other = cur === "ALL" ? "MKD" : "ALL";
 
   $("oPrimaryK").textContent = CUR[primary].name;
   $("oPrimary").textContent = primary === "EUR" ? eur(e) : money(e * rateOf(primary), primary);
-  $("oTRY").textContent = lira(tl);
+  $("oTRY").textContent = lira(e * num(state.rates.TRY));
   $("oOtherK").textContent = CUR[other].name;
   $("oOther").textContent = money(e * rateOf(other), other);
-
   $("calcRateNote").textContent = cur === "EUR" ? ""
     : (isRealRate(cur) ? `kurun ${fmt(rateOf(cur),2)}` : `tahmini ${fmt(rateOf(cur),1)}`);
 
@@ -683,32 +769,75 @@ function renderCalc(){
     v.innerHTML = "Etiketteki rakamı yaz — senin bozdurduğun kurdan euro ve lira karşılığını görürsün.";
   } else {
     const k = calc();
-    const pct = k.remain > 0 ? e/k.remain*100 : 0;
     const meal = num(state.rates.meal) || 7.5;
     const meals = e/meal;
-    let line = k.remain > 0 ? `Kalan bütçenin <b>%${fmt(pct,1)}</b>'i. ` : `Bütçe zaten aşılmış durumda. `;
+    let line = k.remain > 0 ? `Kalan bütçenin <b>%${fmt(e/k.remain*100,1)}</b>'i. ` : `Bütçe zaten aşılmış durumda. `;
     line += meals >= 0.5 ? `Kabaca <b>${fmt(meals,1)} öğün</b> yemek parası.` : `Bir kahvenin altında.`;
     if (cur !== "EUR" && !isRealRate(cur)) line += ` <span class="warn">Gerçek kur henüz girilmedi.</span>`;
     v.innerHTML = line;
   }
   renderRef(cur);
 }
-
 function renderRef(cur){
-  const body = $("refBody");
   $("refHead").textContent = CUR[cur].name;
   const steps = cur === "EUR" ? [1,2,5,10,20,50]
-              : cur === "MKD" ? [50,100,200,500,1000,2000]
-              : [100,200,500,1000,2000,5000];
+              : cur === "MKD" ? [50,100,200,500,1000,2000] : [100,200,500,1000,2000,5000];
   const tr = num(state.rates.TRY);
-  body.innerHTML = steps.map(s => {
+  $("refBody").innerHTML = steps.map(s => {
     const e = toEur(s, cur);
     return `<tr><td>${money(s,cur)}</td><td class="e">${eur(e)}</td><td>${lira(e*tr)}</td></tr>`;
   }).join("");
 }
 
+/* ---------- düzenleme ---------- */
+function startEdit(e){
+  editingId = e.id;
+  $("eAmount").value = e.amount;
+  $("eCur").value = e.cur;
+  setMethod(e.method || "cash");
+  if (!state.categories.includes(e.cat)){ state.categories.push(e.cat); fillCatSelect(); }
+  $("eCat").value = e.cat;
+  $("eNote").value = e.note || "";
+  $("eDate").value = e.date;
+  $("eTime").value = e.time || "";
+  $("editBar").classList.remove("hidden");
+  $("editBarText").textContent = `${money(e.amount,e.cur)} · ${e.cat}`;
+  $("addExpense").textContent = "Değişikliği kaydet";
+  $("formTitle").firstChild.textContent = "Harcamayı düzenle";
+  switchTab("ekle");
+  $("eAmount").focus();
+  render();
+}
+function cancelEdit(){
+  editingId = null;
+  $("editBar").classList.add("hidden");
+  $("addExpense").textContent = "Harcamayı kaydet";
+  $("formTitle").firstChild.textContent = "Harcama ekle";
+  $("eAmount").value = ""; $("eNote").value = "";
+  $("eDate").value = todayISO(); $("eTime").value = nowHM();
+}
+$("cancelEdit").onclick = () => { cancelEdit(); render(); };
+
+function startExEdit(x){
+  editingExId = x.id;
+  $("xEur").value = x.eurGiven;
+  $("xCur").value = x.cur;
+  $("xLocal").value = x.local;
+  $("exEditBar").classList.remove("hidden");
+  $("addExchange").textContent = "Değişikliği kaydet";
+  $("xEur").focus();
+  render();
+}
+function cancelExEdit(){
+  editingExId = null;
+  $("exEditBar").classList.add("hidden");
+  $("addExchange").textContent = "Bozdurmayı kaydet";
+  $("xEur").value = ""; $("xLocal").value = "";
+}
+$("cancelExEdit").onclick = () => { cancelExEdit(); render(); };
+
 /* ---------- eylemler ---------- */
-async function persist(){ await store.save(state); render(); }
+async function persist(){ renderCatTags(); await store.save(state); render(); }
 
 function switchTab(name){
   document.querySelectorAll("nav.tabs button").forEach(b => b.setAttribute("aria-selected", b.dataset.tab === name));
@@ -729,20 +858,34 @@ $("mCard").onclick = () => setMethod("card");
 $("addExpense").onclick = () => {
   const amt = num($("eAmount").value);
   if (amt <= 0){ $("eAmount").focus(); toast("Tutar gir"); return; }
-  state.expenses.push({
-    id: uid(), amount: amt, cur: $("eCur").value, method,
-    cat: $("eCat").value, note: $("eNote").value.trim(), date: $("eDate").value || todayISO()
-  });
-  $("eAmount").value = ""; $("eNote").value = "";
-  persist(); toast("Kaydedildi");
+  const data = {
+    amount: amt, cur: $("eCur").value, method,
+    cat: $("eCat").value, note: $("eNote").value.trim(),
+    date: $("eDate").value || todayISO(), time: $("eTime").value || nowHM()
+  };
+  if (editingId){
+    const i = state.expenses.findIndex(x => x.id === editingId);
+    if (i > -1) state.expenses[i] = Object.assign(state.expenses[i], data);
+    cancelEdit(); persist(); toast("Güncellendi");
+  } else {
+    state.expenses.push(Object.assign({id: uid()}, data));
+    $("eAmount").value = ""; $("eNote").value = ""; $("eTime").value = nowHM();
+    persist(); toast("Kaydedildi");
+  }
 };
 
 $("addExchange").onclick = () => {
   const e = num($("xEur").value), l = num($("xLocal").value);
   if (e <= 0 || l <= 0){ $("xEur").focus(); toast("İki alanı da doldur"); return; }
-  state.exchanges.push({id:uid(), eurGiven:e, local:l, cur:$("xCur").value, date:todayISO()});
-  $("xEur").value = ""; $("xLocal").value = "";
-  persist(); toast(`Kur güncellendi: ${fmt(l/e,2)}`);
+  if (editingExId){
+    const i = state.exchanges.findIndex(x => x.id === editingExId);
+    if (i > -1) Object.assign(state.exchanges[i], {eurGiven:e, local:l, cur:$("xCur").value});
+    cancelExEdit(); persist(); toast(`Kur güncellendi: ${fmt(l/e,2)}`);
+  } else {
+    state.exchanges.push({id:uid(), eurGiven:e, local:l, cur:$("xCur").value, date:todayISO(), time:nowHM()});
+    $("xEur").value = ""; $("xLocal").value = "";
+    persist(); toast(`Kur kaydedildi: ${fmt(l/e,2)}`);
+  }
 };
 
 $("cAmount").oninput = renderCalc;
@@ -750,13 +893,14 @@ $("cCur").onchange = renderCalc;
 $("calcToExpense").onclick = () => {
   const amt = num($("cAmount").value);
   if (amt <= 0){ $("cAmount").focus(); return; }
+  cancelEdit();
   $("eAmount").value = amt;
   $("eCur").value = $("cCur").value;
   switchTab("ekle");
   $("eNote").focus();
 };
 
-const bind = (id, fn) => { const el = $(id); el.onchange = e => { fn(e.target.value); persist(); }; };
+const bind = (id, fn) => { $(id).onchange = e => { fn(e.target.value); persist(); }; };
 bind("bBudget", v => state.budget = num(v));
 bind("bStart",  v => state.start = v);
 bind("bEnd",    v => state.end = v);
@@ -781,10 +925,10 @@ $("importFile").onchange = ev => {
   r.onload = () => {
     try{
       const d = JSON.parse(r.result);
-      if (!d || !Array.isArray(d.expenses) || !Array.isArray(d.exchanges)) throw new Error("format");
-      state = Object.assign(structuredClone(DEFAULTS), d);
-      state.rates = Object.assign({}, DEFAULTS.rates, d.rates || {});
-      fillSettings(); persist(); toast("Yedek yüklendi");
+      if (!d || !Array.isArray(d.expenses)) throw new Error("format");
+      state = migrate(d);
+      fillSettings(); fillCatSelect(); persist();
+      toast(`${state.expenses.length} kalem yüklendi`);
     }catch(err){ toast("Bu dosya okunamadı"); }
   };
   r.readAsText(f); ev.target.value = "";
@@ -793,9 +937,36 @@ $("resetBtn").onclick = () => {
   if (!confirm("Bütün harcamalar ve bozdurmalar silinecek. Devam edilsin mi?")) return;
   const backup = { expenses: state.expenses, exchanges: state.exchanges };
   state.expenses = []; state.exchanges = [];
-  persist();
+  cancelEdit(); cancelExEdit(); persist();
   toast("Kayıtlar silindi", () => { state.expenses = backup.expenses; state.exchanges = backup.exchanges; persist(); });
 };
+
+/* eski sürüm yedeklerini yeni şemaya taşır */
+function migrate(d){
+  const s = Object.assign(structuredClone(DEFAULTS), d);
+  s.rates = Object.assign({}, DEFAULTS.rates, d.rates || {});
+  s.expenses = (Array.isArray(d.expenses) ? d.expenses : []).map(e => ({
+    id: e.id || uid(),
+    amount: num(e.amount),
+    cur: CUR[e.cur] ? e.cur : "EUR",
+    method: e.method === "card" ? "card" : "cash",
+    cat: e.cat || "Diğer",
+    note: e.note || "",
+    date: e.date || todayISO(),
+    time: e.time || "12:00"          // saati olmayan eski kayıtlar
+  }));
+  s.exchanges = (Array.isArray(d.exchanges) ? d.exchanges : []).map(x => ({
+    id: x.id || uid(),
+    eurGiven: num(x.eurGiven),
+    local: num(x.local),
+    cur: CUR[x.cur] ? x.cur : "MKD",
+    date: x.date || todayISO(),
+    time: x.time || "12:00"
+  })).filter(x => x.eurGiven > 0 && x.local > 0);
+  s.categories = Array.isArray(d.categories) && d.categories.length ? [...d.categories] : [...BASE_CATS];
+  for (const e of s.expenses) if (!s.categories.includes(e.cat)) s.categories.push(e.cat);
+  return s;
+}
 
 function fillSettings(){
   $("bBudget").value = state.budget;
@@ -821,7 +992,7 @@ $("installBtn").onclick = async () => {
   $("installBtn").classList.add("hidden");
 };
 $("updateBtn").onclick = async () => {
-  if (!("serviceWorker" in navigator)) { toast("Bu tarayıcı desteklemiyor"); return; }
+  if (!("serviceWorker" in navigator)){ toast("Bu tarayıcı desteklemiyor"); return; }
   const reg = await navigator.serviceWorker.getRegistration();
   if (!reg){ toast("Kayıt bulunamadı"); return; }
   await reg.update();
@@ -833,22 +1004,23 @@ function appMeta(){
 }
 window.addEventListener("online", appMeta);
 window.addEventListener("offline", appMeta);
-
 if ("serviceWorker" in navigator && location.protocol.startsWith("http")){
   window.addEventListener("load", () => navigator.serviceWorker.register("./sw.js").catch(()=>{}));
 }
 
 /* ---------- açılış ---------- */
 (async function init(){
+  try{ themePref = localStorage.getItem(THEMEKEY) || "auto"; }catch(e){}
+  if (!["auto","light","dark"].includes(themePref)) themePref = "auto";
+  applyTheme();
+
   const saved = await store.load();
-  if (saved){
-    state = Object.assign(structuredClone(DEFAULTS), saved);
-    state.rates = Object.assign({}, DEFAULTS.rates, saved.rates || {});
-    state.expenses = Array.isArray(saved.expenses) ? saved.expenses : [];
-    state.exchanges = Array.isArray(saved.exchanges) ? saved.exchanges : [];
-  }
+  if (saved) state = migrate(saved);
+
   $("eDate").value = todayISO();
-  fillSettings();
+  $("eTime").value = nowHM();
+  fillSettings(); fillCatSelect(); renderCatTags();
+
   let tab = "ozet";
   try{ tab = localStorage.getItem(TABKEY) || "ozet"; }catch(e){}
   const asked = new URLSearchParams(location.search).get("tab");
