@@ -1,6 +1,6 @@
 /* Balkan Hesap Defteri — service worker
    Yeni sürüm yayınlarken CACHE_VERSION'ı artır. */
-const CACHE_VERSION = "balkan-v1";
+const CACHE_VERSION = "balkan-v2";
 
 const ASSETS = [
   "./",
