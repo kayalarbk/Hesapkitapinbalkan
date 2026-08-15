@@ -184,6 +184,16 @@ li.ex .tm{display:block;color:var(--dim);font-size:10px;margin-top:2px}
 .tag button{background:none;border:0;color:var(--dim);font-size:15px;line-height:1;cursor:pointer;padding:0}
 .addcat{display:grid;grid-template-columns:1fr 88px;gap:8px}
 
+.lines .ln{display:flex;justify-content:space-between;align-items:baseline;gap:10px;padding:9px 0;border-bottom:1px solid var(--line)}
+.lines .ln:first-child{padding-top:0}
+.lines .ln .k{font-size:13px;color:var(--muted)}
+.lines .ln .v{font-family:var(--mono);font-size:14px;font-variant-numeric:tabular-nums}
+.lines .ln.sum{border-bottom:0;padding-top:13px}
+.lines .ln.sum .k{font-size:13px;color:var(--bone);font-weight:700}
+.lines .ln.sum .v{font-size:22px;font-weight:600}
+.lines .ln .sub{display:block;font-size:10.5px;color:var(--dim);text-align:right;margin-top:2px;font-family:var(--mono)}
+.seg.tiny button{padding:9px 4px;font-size:12px}
+.badge{color:var(--mkd);font-weight:700}
 .foot{display:grid;grid-template-columns:1fr 1fr;gap:9px}
 .note{font-size:11px;color:var(--dim);margin-top:10px;line-height:1.55}
 .hidden{display:none!important}
@@ -254,8 +264,22 @@ li.ex .tm{display:block;color:var(--dim);font-size:10px;margin-top:2px}
   </section>
 
   <section>
+    <h2>Yolculuğun toplam maliyeti <span class="side" id="perPerson"></span></h2>
+    <div class="panel">
+      <div class="lines" id="costLines"></div>
+    </div>
+  </section>
+
+  <section>
     <h2>Neye gitti <span class="side" id="catTotal"></span></h2>
-    <div class="panel" id="catPanel"></div>
+    <div class="panel">
+      <div class="seg tiny" id="catScope" style="margin-bottom:13px">
+        <button type="button" data-scope="trip" aria-pressed="true">Yolda</button>
+        <button type="button" data-scope="pre" aria-pressed="false">Öncesi</button>
+        <button type="button" data-scope="all" aria-pressed="false">Hepsi</button>
+      </div>
+      <div id="catPanel"></div>
+    </div>
   </section>
 </div>
 
@@ -268,10 +292,14 @@ li.ex .tm{display:block;color:var(--dim);font-size:10px;margin-top:2px}
         <span id="editBarText">Kaydı düzenliyorsun</span>
         <button type="button" id="cancelEdit">Vazgeç</button>
       </div>
+      <div class="row">
+        <div><label>Ne zaman ödendi</label>
+          <div class="seg"><button type="button" id="sTrip" aria-pressed="true">Yolda</button><button type="button" id="sPre" aria-pressed="false">Yolculuk öncesi</button></div></div>
+      </div>
       <div class="row r2">
         <div><label for="eAmount">Tutar</label><input id="eAmount" type="number" inputmode="decimal" step="0.01" min="0" placeholder="0"></div>
         <div><label for="eCur">Para birimi</label>
-          <select id="eCur"><option value="EUR">€ Euro</option><option value="MKD">ден Denar</option><option value="ALL">L Lek</option></select></div>
+          <select id="eCur"><option value="EUR">€ Euro</option><option value="MKD">ден Denar</option><option value="ALL">L Lek</option><option value="TRY" id="optTRY">₺ Türk lirası</option></select></div>
       </div>
       <div class="row r2">
         <div><label>Ödeme</label>
@@ -363,9 +391,10 @@ li.ex .tm{display:block;color:var(--dim);font-size:10px;margin-top:2px}
     <div class="panel">
       <div class="row"><div><label for="bBudget">Toplam nakit bütçe (€)</label>
         <input id="bBudget" type="number" inputmode="decimal" step="5" min="0"></div></div>
-      <div class="row r2">
+      <div class="row r3">
         <div><label for="bStart">Başlangıç</label><input id="bStart" type="date"></div>
         <div><label for="bEnd">Dönüş</label><input id="bEnd" type="date"></div>
+        <div><label for="bPeople">Kişi</label><input id="bPeople" type="number" inputmode="numeric" step="1" min="1"></div>
       </div>
       <div class="note">Bütçe yalnızca yanına aldığın nakit euro. Kartla ödediklerin ayrı sayılır, bakiyeden düşmez.</div>
     </div>
@@ -433,7 +462,7 @@ li.ex .tm{display:block;color:var(--dim);font-size:10px;margin-top:2px}
 
 <script>
 "use strict";
-const APP_VERSION = "1.1.0";
+const APP_VERSION = "1.2.0";
 const KEY = "balkan-ledger-v1";
 const TABKEY = "balkan-ledger-tab";
 const THEMEKEY = "balkan-ledger-theme";
@@ -461,19 +490,23 @@ const store = {
 const CUR = {
   EUR:{sym:"€", dec:2, color:"var(--eur)", name:"Euro"},
   MKD:{sym:"ден", dec:0, color:"var(--mkd)", name:"Denar"},
-  ALL:{sym:"L", dec:0, color:"var(--all)", name:"Lek"}
+  ALL:{sym:"L", dec:0, color:"var(--all)", name:"Lek"},
+  TRY:{sym:"₺", dec:0, color:"var(--muted)", name:"Türk lirası"}
 };
 const BASE_CATS = [
   "Yemek","Kahvaltı","Kahve / atıştırma","Tatlı / dondurma","Bar / içki",
   "Market","Su / içecek","Şehir içi ulaşım","Şehirlerarası otobüs","Taksi / transfer",
   "Konaklama","Müze / giriş","Tur / tekne","Hediyelik","Kıyafet",
-  "Eczane / sağlık","SIM / internet","Emanet / tuvalet","Bahşiş","Diğer"
+  "Eczane / sağlık","SIM / internet","Emanet / tuvalet","Bahşiş","Diğer",
+  "Uçak bileti","Konaklama ön ödeme","Vize / sigorta","Havalimanı vergisi",
+  "Hazırlık / ekipman","Rezervasyon / bilet"
 ];
 const DEFAULTS = {
   budget: 385,
   start: "2026-08-12",
   end: "2026-08-20",
   rates: { MKD: 61.5, ALL: 98, TRY: 56, meal: 7.5 },
+  people: 2,
   categories: [...BASE_CATS],
   exchanges: [],
   expenses: []
@@ -481,6 +514,7 @@ const DEFAULTS = {
 
 let state = structuredClone(DEFAULTS);
 let method = "cash";
+let scope = "trip";
 let editingId = null;
 let editingExId = null;
 let themePref = "auto";
@@ -548,15 +582,20 @@ function toast(msg, undo){
 function hideToast(){ $("toast").classList.remove("on"); }
 
 function calc(){
-  const cash = {EUR:0,MKD:0,ALL:0}, card = {EUR:0,MKD:0,ALL:0};
-  for (const e of state.expenses) (e.method === "card" ? card : cash)[e.cur] += e.amount;
+  const cash = {EUR:0,MKD:0,ALL:0,TRY:0}, card = {EUR:0,MKD:0,ALL:0,TRY:0};
+  let pre = 0;
+  for (const e of state.expenses){
+    if (e.scope === "pre"){ pre += toEur(e.amount, e.cur); continue; }
+    (e.method === "card" ? card : cash)[e.cur] += e.amount;
+  }
   const cashEur = {EUR:cash.EUR, MKD:toEur(cash.MKD,"MKD"), ALL:toEur(cash.ALL,"ALL")};
-  const spent = cashEur.EUR + cashEur.MKD + cashEur.ALL;
-  const cardEur = card.EUR + toEur(card.MKD,"MKD") + toEur(card.ALL,"ALL");
+  const spent = cashEur.EUR + cashEur.MKD + cashEur.ALL + toEur(cash.TRY,"TRY");
+  const cardEur = card.EUR + toEur(card.MKD,"MKD") + toEur(card.ALL,"ALL") + toEur(card.TRY,"TRY");
   const given = state.exchanges.reduce((s,x)=>s+x.eurGiven,0);
   const got = c => state.exchanges.filter(x=>x.cur===c).reduce((s,x)=>s+x.local,0);
   const pocket = { EUR: num(state.budget) - given - cash.EUR, MKD: got("MKD") - cash.MKD, ALL: got("ALL") - cash.ALL };
-  return {cash, card, cashEur, spent, cardEur, pocket, remain: num(state.budget) - spent};
+  return {cash, card, cashEur, spent, cardEur, pocket, pre,
+          total: pre + spent + cardEur, remain: num(state.budget) - spent};
 }
 
 const C = 2 * Math.PI * 82;
@@ -601,7 +640,8 @@ function render(){
   $("rateNote").textContent = msg;
   $("rateStatus").textContent = msg;
 
-  renderCategories(k);
+  renderCost(k);
+  renderCategories();
   renderExchanges();
   renderExpenses();
   renderCalc();
@@ -620,10 +660,33 @@ function renderHeader(k){
     : `<b>${n}/${total}</b>. gün`;
 }
 
+function renderCost(k){
+  const tr = num(state.rates.TRY);
+  const people = Math.max(1, Math.round(num(state.people) || 1));
+  const tl = v => tr ? `<span class="sub">${lira(v*tr)}</span>` : "";
+  $("perPerson").textContent = people > 1 ? `kişi başı ${eur(k.total/people)}` : "";
+  $("costLines").innerHTML = `
+    <div class="ln"><span class="k">Yolculuk öncesi</span><span class="v">${eur(k.pre)}${tl(k.pre)}</span></div>
+    <div class="ln"><span class="k">Yolda nakit</span><span class="v">${eur(k.spent)}${tl(k.spent)}</span></div>
+    <div class="ln"><span class="k">Kredi kartı</span><span class="v">${eur(k.cardEur)}${tl(k.cardEur)}</span></div>
+    <div class="ln sum"><span class="k">Toplam</span><span class="v">${eur(k.total)}${tl(k.total)}</span></div>`;
+}
+
+let catScope = "trip";
+document.querySelectorAll("#catScope button").forEach(b => b.onclick = () => {
+  catScope = b.dataset.scope;
+  document.querySelectorAll("#catScope button").forEach(x => x.setAttribute("aria-pressed", x === b));
+  renderCategories();
+});
+
 function renderCategories(){
   const p = $("catPanel");
   const sums = {};
-  for (const e of state.expenses) sums[e.cat] = (sums[e.cat] || 0) + toEur(e.amount, e.cur);
+  for (const e of state.expenses){
+    const sc = e.scope === "pre" ? "pre" : "trip";
+    if (catScope !== "all" && catScope !== sc) continue;
+    sums[e.cat] = (sums[e.cat] || 0) + toEur(e.amount, e.cur);
+  }
   const rows = Object.entries(sums).sort((a,b)=>b[1]-a[1]);
   const total = rows.reduce((s,r)=>s+r[1],0);
   $("catTotal").textContent = total ? eur(total) : "";
@@ -696,7 +759,8 @@ function renderExpenses(){
           <span class="ttl" style="display:block">${esc(e.note || e.cat)}</span>
           <span class="meta">${e.time ? `<span class="tm">${esc(e.time)}</span>` : ""}
           ${e.note ? `<span>${esc(e.cat)}</span>` : ""}
-          ${e.method === "card" ? `<span class="cc">Kart</span>` : ""}</span>
+          ${e.method === "card" ? `<span class="cc">Kart</span>` : ""}
+          ${e.scope === "pre" ? `<span class="badge">Öncesi</span>` : ""}</span>
         </span>
         <span class="val">${money(e.amount,e.cur)}${e.cur !== "EUR" ? `<small>${eur(toEur(e.amount,e.cur))}</small>` : ""}</span>`;
       tap.onclick = () => startEdit(e);
@@ -793,6 +857,7 @@ function renderRef(cur){
 function startEdit(e){
   editingId = e.id;
   $("eAmount").value = e.amount;
+  setScope(e.scope === "pre" ? "pre" : "trip");
   $("eCur").value = e.cur;
   setMethod(e.method || "cash");
   if (!state.categories.includes(e.cat)){ state.categories.push(e.cat); fillCatSelect(); }
@@ -815,6 +880,7 @@ function cancelEdit(){
   $("formTitle").firstChild.textContent = "Harcama ekle";
   $("eAmount").value = ""; $("eNote").value = "";
   $("eDate").value = todayISO(); $("eTime").value = nowHM();
+  setScope("trip");
 }
 $("cancelEdit").onclick = () => { cancelEdit(); render(); };
 
@@ -855,12 +921,24 @@ function setMethod(m){
 $("mCash").onclick = () => setMethod("cash");
 $("mCard").onclick = () => setMethod("card");
 
+function setScope(s){
+  scope = s;
+  $("sTrip").setAttribute("aria-pressed", s === "trip");
+  $("sPre").setAttribute("aria-pressed", s === "pre");
+  // lira yalnızca yolculuk öncesi ödemeler için anlamlı
+  $("optTRY").disabled = (s !== "pre");
+  if (s !== "pre" && $("eCur").value === "TRY") $("eCur").value = "EUR";
+  if (s === "pre" && !$("eCur").value) $("eCur").value = "TRY";
+}
+$("sTrip").onclick = () => setScope("trip");
+$("sPre").onclick = () => setScope("pre");
+
 $("addExpense").onclick = () => {
   const amt = num($("eAmount").value);
   if (amt <= 0){ $("eAmount").focus(); toast("Tutar gir"); return; }
   const data = {
     amount: amt, cur: $("eCur").value, method,
-    cat: $("eCat").value, note: $("eNote").value.trim(),
+    cat: $("eCat").value, note: $("eNote").value.trim(), scope,
     date: $("eDate").value || todayISO(), time: $("eTime").value || nowHM()
   };
   if (editingId){
@@ -904,6 +982,7 @@ const bind = (id, fn) => { $(id).onchange = e => { fn(e.target.value); persist()
 bind("bBudget", v => state.budget = num(v));
 bind("bStart",  v => state.start = v);
 bind("bEnd",    v => state.end = v);
+bind("bPeople", v => state.people = Math.max(1, Math.round(num(v) || 1)));
 bind("rMKD",    v => state.rates.MKD = num(v) || 1);
 bind("rALL",    v => state.rates.ALL = num(v) || 1);
 bind("rTRY",    v => state.rates.TRY = num(v));
@@ -952,6 +1031,7 @@ function migrate(d){
     method: e.method === "card" ? "card" : "cash",
     cat: e.cat || "Diğer",
     note: e.note || "",
+    scope: e.scope === "pre" ? "pre" : "trip",
     date: e.date || todayISO(),
     time: e.time || "12:00"          // saati olmayan eski kayıtlar
   }));
@@ -963,7 +1043,9 @@ function migrate(d){
     date: x.date || todayISO(),
     time: x.time || "12:00"
   })).filter(x => x.eurGiven > 0 && x.local > 0);
+  s.people = Math.max(1, Math.round(num(d.people) || 2));
   s.categories = Array.isArray(d.categories) && d.categories.length ? [...d.categories] : [...BASE_CATS];
+  for (const c of BASE_CATS) if (!s.categories.includes(c)) s.categories.push(c);
   for (const e of s.expenses) if (!s.categories.includes(e.cat)) s.categories.push(e.cat);
   return s;
 }
@@ -972,6 +1054,7 @@ function fillSettings(){
   $("bBudget").value = state.budget;
   $("bStart").value = state.start;
   $("bEnd").value = state.end;
+  $("bPeople").value = state.people;
   $("rMKD").value = state.rates.MKD;
   $("rALL").value = state.rates.ALL;
   $("rTRY").value = state.rates.TRY;
@@ -1019,6 +1102,7 @@ if ("serviceWorker" in navigator && location.protocol.startsWith("http")){
 
   $("eDate").value = todayISO();
   $("eTime").value = nowHM();
+  setScope("trip");
   fillSettings(); fillCatSelect(); renderCatTags();
 
   let tab = "ozet";
